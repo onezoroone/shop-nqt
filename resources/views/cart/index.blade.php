@@ -16,7 +16,8 @@
         @endif
 
         @if (count($cartItems) > 0)
-            <div class="space-y-4 mb-8">
+            <div id="cart-content">
+                <div class="space-y-4 mb-8">
                 @foreach ($cartItems as $index => $item)
                     <div class="glass-card p-4 flex items-center gap-4 reveal" style="transition-delay: {{ $index * 0.05 }}s" id="cart-item-{{ $item['product']->id }}">
                         {{-- Thumbnail --}}
@@ -71,10 +72,15 @@
                     <span class="text-lg font-semibold text-gray-300">Tổng cộng</span>
                     <span class="text-3xl font-black text-success">${{ number_format($total, 2) }}</span>
                 </div>
-                <button class="w-full btn-primary text-lg justify-center py-4" id="checkout-btn">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" /></svg>
-                    Tiến hành Thanh toán
-                </button>
+                
+                <form action="{{ route('checkout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="w-full btn-primary text-lg justify-center py-4" id="checkout-btn">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" /></svg>
+                        Tiến hành Đặt hàng
+                    </button>
+                </form>
+
                 <a href="{{ route('products.index') }}" class="block text-center text-sm text-gray-400 hover:text-primary transition-colors mt-4">← Tiếp tục Mua sắm</a>
             </div>
         @else

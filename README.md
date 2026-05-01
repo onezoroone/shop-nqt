@@ -1,59 +1,107 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# NQTDev Shop & Portfolio - Laravel 12
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Chào mừng bạn đến với mã nguồn **NQTDev Shop & Portfolio**. Đây là một hệ thống web hiện đại, được xây dựng trên nền tảng Laravel 12 kết hợp với Backpack for Laravel, chuyên dùng để bán các sản phẩm số (Source Code, Template, Plugin) và trưng bày các dự án cá nhân (Portfolio).
 
-## About Laravel
+Giao diện người dùng (Frontend) được thiết kế theo phong cách Glassmorphism sang trọng, mượt mà với Tailwind CSS. Trang quản trị (Backend) sử dụng Backpack for Laravel để quản lý nội dung dễ dàng, linh hoạt.
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🌟 Tính năng nổi bật
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Dành cho Khách hàng (Frontend)
+- **Giao diện hiện đại:** Thiết kế Dark Mode tinh tế, hiệu ứng Glassmorphism (thẻ kính trong suốt), thân thiện với mọi thiết bị (Responsive).
+- **Cửa hàng Sản phẩm số:** Hiển thị danh sách sản phẩm, lọc theo danh mục, sắp xếp (Mới nhất, Phổ biến, Giá cả), tìm kiếm.
+- **Trưng bày Dự án (Portfolio):** Giới thiệu các dự án đã thực hiện kèm hình ảnh, công nghệ sử dụng và link demo.
+- **Quản lý Tài khoản (Dashboard):** Đăng nhập/Đăng ký nhanh chóng. Theo dõi lịch sử đơn hàng, trạng thái thanh toán.
+- **Thanh toán linh hoạt:** Hỗ trợ thanh toán thủ công qua USDT (TRC20) hoặc chuyển khoản. Hướng dẫn xác nhận qua Telegram.
+- **Tự động cấp quyền tải:** Sau khi Admin duyệt đơn, nút "Tải Source Code" sẽ tự động xuất hiện trong chi tiết đơn hàng của khách.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Dành cho Quản trị viên (Backend - Backpack)
+- **Quản lý Sản phẩm:** Thêm, sửa, xoá sản phẩm. Hỗ trợ WYSIWYG editor (CKEditor), tải lên nhiều ảnh (Gallery), quản lý giá bán, và tự động ẩn/hiện link Source Code.
+- **Quản lý Đơn hàng:** Duyệt đơn hàng nhanh bằng 1 click chuột (Quick Action), tự động cập nhật trạng thái đơn thành "Đã thanh toán".
+- **Laravel File Manager (LFM):** Tích hợp trình quản lý file siêu mạnh mẽ cho toàn bộ hệ thống Admin.
+- **Quản lý Danh mục & Phân quyền:** Phân chia danh mục sản phẩm, bảo mật tuyệt đối với Middleware kiểm tra quyền Admin (`is_admin`).
 
-## Learning Laravel
+---
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## 🚀 Hướng dẫn cài đặt (Installation)
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Yêu cầu hệ thống:
+- **PHP** >= 8.2
+- **Composer** v2+
+- **Node.js** & **NPM** (để biên dịch Tailwind CSS)
+- **MySQL** hoặc **PostgreSQL**
 
-## Laravel Sponsors
+### Bước 1: Lấy mã nguồn & Cài đặt thư viện PHP
+Mở Terminal/Command Prompt và chạy các lệnh sau:
+```bash
+git clone <link-repo-cua-ban>
+cd shop-nqt
+composer install
+```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+### Bước 2: Cấu hình môi trường (.env)
+Copy file `.env.example` thành `.env`:
+```bash
+cp .env.example .env
+```
+Mở file `.env` và điền thông tin kết nối Database của bạn (DB_DATABASE, DB_USERNAME, DB_PASSWORD).
+Sau đó tạo key bảo mật:
+```bash
+php artisan key:generate
+```
 
-### Premium Partners
+### Bước 3: Liên kết thư mục Storage & Chạy Migration
+Hệ thống cần thư mục public/storage để lưu trữ ảnh sản phẩm:
+```bash
+php artisan storage:link
+```
+Chạy lệnh tạo các bảng trong Database:
+```bash
+php artisan migrate
+```
+*(Lưu ý: Migration `2026_05_01_052811_add_is_admin_to_users_table.php` đã được cấu hình để tự động cấp quyền Admin cho tài khoản có ID = 1).*
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+### Bước 4: Cài đặt thư viện Frontend & Biên dịch CSS
+Cài đặt thư viện Node.js:
+```bash
+npm install
+```
+Biên dịch Tailwind CSS và các file JS:
+```bash
+npm run build
+# Hoặc dùng lệnh sau nếu bạn đang code và muốn tự cập nhật khi sửa file:
+# npm run dev
+```
 
-## Contributing
+### Bước 5: Tạo tài khoản Admin
+Bạn có thể tự tạo tài khoản Admin theo 2 cách:
+1. Đăng ký 1 tài khoản bình thường ở trang ngoài (`/register`), đây sẽ là tài khoản đầu tiên (ID = 1). Hệ thống sẽ tự động biến tài khoản ID 1 thành Admin.
+2. Hoặc chạy lệnh Artisan dựng sẵn để cấp quyền bằng Email (hoặc tạo mới Admin):
+```bash
+php artisan app:make-admin your@email.com
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+---
 
-## Code of Conduct
+## 🖥️ Cách sử dụng
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+- **Trang chủ người dùng:** Truy cập `http://localhost:8000`
+- **Trang quản trị (Admin):** Truy cập `http://localhost:8000/admin`
+  - Đăng nhập bằng tài khoản đã được cấp quyền `is_admin = 1`.
 
-## Security Vulnerabilities
+### Một số thiết lập tùy chỉnh (Settings)
+Bạn có thể thêm các cấu hình tuỳ chỉnh trong bảng `settings` (thông qua giao diện Admin -> Cài đặt), ví dụ:
+- `usdt_wallet_address`: Địa chỉ ví USDT (TRC20) hiển thị cho khách chuyển khoản.
+- `telegram_url`: Link Telegram để khách hàng liên hệ xác nhận (Ví dụ: `https://t.me/nqtdev`).
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 🛠️ Công nghệ sử dụng (Tech Stack)
+- **Framework:** Laravel v12.x
+- **Admin Panel:** Backpack for Laravel v6.x
+- **CSS Framework:** Tailwind CSS v3.x
+- **File Manager:** UniSharp Laravel File Manager (LFM)
+- **Bundler:** Vite
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+## 📝 Bản quyền & Giấy phép
+Dự án được xây dựng và phát triển bởi **NQTDev**. 
+Vui lòng không thương mại hoá mã nguồn nếu chưa có sự đồng ý.

@@ -3,34 +3,42 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\ProductRequest;
+use App\Models\Category;
+use App\Models\Product;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
  * Class ProductCrudController
  *
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ * @property-read CrudPanel $crud
  */
 class ProductCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     public function setup()
     {
-        CRUD::setModel(\App\Models\Product::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/product');
+        CRUD::setModel(Product::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/product');
         CRUD::setEntityNameStrings('product', 'products');
     }
 
     protected function setupListOperation()
     {
         CRUD::column('title')->type('text')->limit(50);
-        CRUD::column('category_id')->type('select')
-            ->entity('category')->attribute('name')->model(\App\Models\Category::class);
+        CRUD::column('categories')->type('select_multiple')
+            ->entity('categories')->attribute('name')->model(Category::class)->label('Categories');
         CRUD::column('price')->type('number')->prefix('$')->decimals(2);
         CRUD::column('sale_price')->type('number')->prefix('$')->decimals(2);
         CRUD::column('download_count')->type('number')->label('Downloads');
@@ -48,31 +56,33 @@ class ProductCrudController extends CrudController
         CRUD::field('title')->type('text')->size(8);
         CRUD::field('slug')->type('text')->size(4)
             ->hint('Leave empty to auto-generate');
-        CRUD::field('category_id')->type('select2')
-            ->entity('category')->attribute('name')
-            ->model(\App\Models\Category::class)
+        CRUD::field('categories')->type('select2_multiple')
+            ->entity('categories')->attribute('name')
+            ->model(Category::class)
+            ->pivot(true)
             ->options(function ($query) {
                 return $query->where('type', 'product')->orderBy('sort_order')->get();
-            })->size(6);
+            })->label('Thể loại (chọn nhiều)');
         CRUD::field('status')->type('enum')->size(3);
         CRUD::field('is_featured')->type('boolean')->label('Featured')->size(3);
         CRUD::field('excerpt')->type('textarea')->attributes(['rows' => 3]);
-        CRUD::field('description')->type('wysiwyg');
+        CRUD::field('description')->type('wysiwyg')->tab('Thông tin cơ bản');
+        CRUD::field('changelog')->type('wysiwyg')->label('Changelog (Lịch sử cập nhật)')->tab('Changelog');
         CRUD::field('thumbnail')->type('upload')
             ->withFiles(['disk' => 'public', 'path' => 'products']);
+        CRUD::field('gallery')->type('gallery_preview')->label('Gallery (chọn nhiều ảnh)');
         CRUD::field('price')->type('number')
             ->prefix('$')->attributes(['step' => '0.01'])->size(4);
         CRUD::field('sale_price')->type('number')
             ->prefix('$')->attributes(['step' => '0.01'])->size(4)
             ->hint('Leave empty for no sale');
         CRUD::field('download_count')->type('number')->default(0)->size(4)->label('Downloads');
-        CRUD::field('tech_stack')->type('repeatable')
-            ->subfields([['name' => 'value', 'type' => 'text', 'label' => 'Technology']])
-            ->hint('Technologies used');
-        CRUD::field('features')->type('repeatable')
-            ->subfields([['name' => 'value', 'type' => 'text', 'label' => 'Feature']])
-            ->hint('Product features list');
+        CRUD::field('tech_stack_csv')->type('textarea')
+            ->label('Technologies (comma separated)')->hint('Example: PHP, Laravel, Tailwind');
+        CRUD::field('features_csv')->type('textarea')
+            ->label('Features (comma separated)')->hint('Example: Secure login, Dark mode, API');
         CRUD::field('demo_url')->type('url')->size(6)->label('Demo URL');
+        CRUD::field('source_url')->type('url')->size(6)->label('Link Source Code (Google Drive, vv.)')->hint('Sẽ hiển thị cho khách sau khi thanh toán xong.');
         CRUD::field('published_at')->type('datetime')->size(6);
     }
 

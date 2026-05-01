@@ -65,6 +65,22 @@ body {
     background-clip: text;
 }
 
+/* ===== Premium Animated Gradient Text ===== */
+@keyframes aurora-text {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.text-aurora {
+    background: linear-gradient(to right, var(--color-primary), var(--color-accent), #ec4899, var(--color-primary));
+    background-size: 300% 100%;
+    animation: aurora-text 6s ease-in-out infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
 /* ===== Gradient Shimmer Animation ===== */
 @keyframes shimmer {
     0% { background-position: -200% center; }
@@ -204,6 +220,32 @@ body {
     font-size: 1.875rem;
     font-weight: 700;
     margin-bottom: 1rem;
+}
+
+/* ===== Logo Hover Animation ===== */
+.logo-container:hover .logo-icon {
+    transform: rotate(360deg) scale(1.15);
+    box-shadow: 0 0 25px rgba(59, 130, 246, 0.6), inset 0 0 10px rgba(255, 255, 255, 0.3);
+}
+.logo-icon {
+    transition: all 0.7s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+.logo-container:hover .logo-letter {
+    transform: scale(1.2);
+}
+.logo-letter {
+    display: inline-block;
+    transition: transform 0.4s ease;
+}
+.logo-container:hover .logo-text {
+    text-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+    color: var(--color-primary);
+}
+.logo-container:hover .logo-text span {
+    color: #ec4899;
+}
+.logo-text, .logo-text span {
+    transition: all 0.3s ease;
 }
 
 @media (min-width: 768px) {

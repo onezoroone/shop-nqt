@@ -8,5 +8,6 @@
     <x-backpack::menu-dropdown-item title="Skills" icon="la la-star" :link="backpack_url('skill')" />
 </x-backpack::menu-dropdown>
 
+<x-backpack::menu-item title="Orders" icon="la la-shopping-cart" :link="backpack_url('order')" />
 <x-backpack::menu-item title="Contacts" icon="la la-envelope" :link="backpack_url('contact')" />
 <x-backpack::menu-item title="Settings" icon="la la-cog" :link="backpack_url('setting')" />

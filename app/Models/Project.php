@@ -47,6 +47,16 @@ class Project extends Model
         ];
     }
 
+    public function getTechStackCsvAttribute()
+    {
+        return implode(', ', $this->tech_stack ?? []);
+    }
+
+    public function setTechStackCsvAttribute($value)
+    {
+        $this->attributes['tech_stack'] = json_encode(array_filter(array_map('trim', explode(',', $value))));
+    }
+
     /**
      * @return BelongsTo<Category, $this>
      */

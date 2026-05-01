@@ -24,10 +24,10 @@ class ProductController extends Controller
         });
 
         $products = Product::select('id', 'category_id', 'title', 'slug', 'excerpt', 'thumbnail', 'price', 'sale_price', 'tech_stack', 'download_count', 'published_at')
-            ->with('category:id,name,slug')
+            ->with('categories:id,name,slug')
             ->published()
             ->when($categorySlug, function ($query) use ($categorySlug) {
-                $query->whereHas('category', fn ($q) => $q->where('slug', $categorySlug));
+                $query->whereHas('categories', fn ($q) => $q->where('slug', $categorySlug));
             })
             ->when($search, function ($query) use ($search) {
                 $query->where(function ($q) use ($search) {
@@ -52,12 +52,14 @@ class ProductController extends Controller
 
     public function show(Product $product): View
     {
-        $product->load(['category:id,name,slug', 'images']);
+        $product->load(['categories:id,name,slug']);
+
+        $categoryIds = $product->categories->pluck('id');
 
         $relatedProducts = Product::select('id', 'category_id', 'title', 'slug', 'excerpt', 'thumbnail', 'price', 'sale_price', 'download_count')
-            ->with('category:id,name,slug')
+            ->with('categories:id,name,slug')
             ->published()
-            ->where('category_id', $product->category_id)
+            ->whereHas('categories', fn ($q) => $q->whereIn('categories.id', $categoryIds))
             ->where('id', '!=', $product->id)
             ->ordered()
             ->limit(3)

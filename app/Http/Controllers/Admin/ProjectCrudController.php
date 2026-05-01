@@ -3,26 +3,34 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Requests\ProjectRequest;
+use App\Models\Category;
+use App\Models\Project;
 use Backpack\CRUD\app\Http\Controllers\CrudController;
+use Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
+use Backpack\CRUD\app\Library\CrudPanel\CrudPanel;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
 
 /**
  * Class ProjectCrudController
  *
- * @property-read \Backpack\CRUD\app\Library\CrudPanel\CrudPanel $crud
+ * @property-read CrudPanel $crud
  */
 class ProjectCrudController extends CrudController
 {
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\CreateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\DeleteOperation;
-    use \Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
+    use CreateOperation;
+    use DeleteOperation;
+    use ListOperation;
+    use ShowOperation;
+    use UpdateOperation;
 
     public function setup()
     {
-        CRUD::setModel(\App\Models\Project::class);
-        CRUD::setRoute(config('backpack.base.route_prefix') . '/project');
+        CRUD::setModel(Project::class);
+        CRUD::setRoute(config('backpack.base.route_prefix').'/project');
         CRUD::setEntityNameStrings('project', 'projects');
     }
 
@@ -30,7 +38,7 @@ class ProjectCrudController extends CrudController
     {
         CRUD::column('title')->type('text')->limit(50);
         CRUD::column('category_id')->type('select')
-            ->entity('category')->attribute('name')->model(\App\Models\Category::class);
+            ->entity('category')->attribute('name')->model(Category::class);
         CRUD::column('status')->type('enum');
         CRUD::column('is_featured')->type('boolean')->label('Featured');
         CRUD::column('published_at')->type('datetime');
@@ -48,7 +56,7 @@ class ProjectCrudController extends CrudController
             ->hint('Leave empty to auto-generate');
         CRUD::field('category_id')->type('select2')
             ->entity('category')->attribute('name')
-            ->model(\App\Models\Category::class)
+            ->model(Category::class)
             ->options(function ($query) {
                 return $query->where('type', 'project')->orderBy('sort_order')->get();
             })->size(6);
@@ -58,9 +66,8 @@ class ProjectCrudController extends CrudController
         CRUD::field('description')->type('wysiwyg');
         CRUD::field('thumbnail')->type('upload')
             ->withFiles(['disk' => 'public', 'path' => 'projects']);
-        CRUD::field('tech_stack')->type('repeatable')
-            ->subfields([['name' => 'value', 'type' => 'text', 'label' => 'Technology']])
-            ->hint('Add technologies used in this project');
+        CRUD::field('tech_stack_csv')->type('textarea')
+            ->label('Technologies (comma separated)')->hint('Example: PHP, Laravel, Tailwind');
         CRUD::field('demo_url')->type('url')->size(6)->label('Demo URL');
         CRUD::field('source_url')->type('url')->size(6)->label('Source Code URL');
         CRUD::field('sort_order')->type('number')->default(0)->size(6);

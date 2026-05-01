@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Product extends Model
@@ -20,11 +21,14 @@ class Product extends Model
         'slug',
         'excerpt',
         'description',
+        'changelog',
         'thumbnail',
+        'gallery',
         'price',
         'sale_price',
         'tech_stack',
         'demo_url',
+        'source_url',
         'features',
         'is_featured',
         'download_count',
@@ -46,11 +50,32 @@ class Product extends Model
         return [
             'tech_stack' => 'array',
             'features' => 'array',
+            'gallery' => 'array',
             'is_featured' => 'boolean',
             'price' => 'decimal:2',
             'sale_price' => 'decimal:2',
             'published_at' => 'datetime',
         ];
+    }
+
+    public function getTechStackCsvAttribute(): string
+    {
+        return implode(', ', $this->tech_stack ?? []);
+    }
+
+    public function setTechStackCsvAttribute($value): void
+    {
+        $this->attributes['tech_stack'] = json_encode(array_filter(array_map('trim', explode(',', $value))));
+    }
+
+    public function getFeaturesCsvAttribute(): string
+    {
+        return implode(', ', $this->features ?? []);
+    }
+
+    public function setFeaturesCsvAttribute($value): void
+    {
+        $this->attributes['features'] = json_encode(array_filter(array_map('trim', explode(',', $value))));
     }
 
     /**
@@ -59,6 +84,14 @@ class Product extends Model
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * @return BelongsToMany<Category, $this>
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class);
     }
 
     /**

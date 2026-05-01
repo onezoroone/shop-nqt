@@ -19,11 +19,11 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 md:h-20">
                 {{-- Logo --}}
-                <a href="{{ route('home') }}" class="flex items-center gap-2 group" id="site-logo">
-                    <div class="w-10 h-10 rounded-xl gradient-shimmer flex items-center justify-center">
-                        <span class="text-white font-black text-lg">N</span>
+                <a href="{{ route('home') }}" class="flex items-center gap-2 logo-container" id="site-logo">
+                    <div class="w-10 h-10 rounded-xl gradient-shimmer flex items-center justify-center logo-icon">
+                        <span class="text-white font-black text-lg logo-letter">N</span>
                     </div>
-                    <span class="text-xl font-bold text-white group-hover:text-primary transition-colors">NQT<span class="text-primary">Dev</span></span>
+                    <span class="text-xl font-bold text-white logo-text">NQT<span class="text-primary">Dev</span></span>
                 </a>
 
                 {{-- Desktop Nav --}}
@@ -44,6 +44,33 @@
                         <span id="cart-badge" class="cart-badge" style="{{ $cartCount > 0 ? '' : 'display:none' }}">{{ $cartCount }}</span>
                     </a>
 
+                    @auth
+                        <div class="relative group">
+                            <button class="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-white bg-surface-dark/80 border border-white/10 rounded-lg hover:border-primary/50 transition-colors">
+                                <div class="w-6 h-6 rounded-full bg-gradient-to-r from-primary to-accent flex items-center justify-center text-xs font-bold text-white">
+                                    {{ substr(auth()->user()->name, 0, 1) }}
+                                </div>
+                            </button>
+                            <!-- Dropdown -->
+                            <div class="absolute right-0 mt-2 w-48 bg-surface-dark border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                                <div class="py-2">
+                                    <div class="px-4 py-2 border-b border-white/5 mb-2">
+                                        <p class="text-sm font-semibold text-white truncate">{{ auth()->user()->name }}</p>
+                                        <p class="text-xs text-gray-400 truncate">{{ auth()->user()->email }}</p>
+                                    </div>
+                                    <a href="{{ route('dashboard') }}" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5">Tài khoản</a>
+                                    <a href="{{ route('orders.index') }}" class="block px-4 py-2 text-sm text-gray-300 hover:text-white hover:bg-white/5">Đơn hàng của tôi</a>
+                                    <form method="POST" action="{{ route('logout') }}" class="block">
+                                        @csrf
+                                        <button type="submit" class="w-full text-left px-4 py-2 text-sm text-danger hover:bg-danger/10 transition-colors">Đăng xuất</button>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    @else
+                        <a href="{{ route('login') }}" class="hidden md:inline-flex px-4 py-2 text-sm font-medium text-white bg-primary hover:bg-primary/80 rounded-lg transition-colors">Đăng nhập</a>
+                    @endauth
+                    
                     <button id="mobile-nav-toggle" class="md:hidden p-2 text-gray-300 hover:text-white transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
@@ -54,7 +81,7 @@
 
             {{-- Mobile Nav Menu --}}
             <div id="mobile-nav-menu" class="hidden md:hidden pb-4">
-                <div class="glass-card p-4 space-y-1">
+                <div class="bg-[#0f172a] border border-white/10 shadow-2xl rounded-2xl p-4 space-y-1 relative z-50">
                     <a href="{{ route('home') }}" class="block px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all">Trang chủ</a>
                     <a href="{{ route('projects.index') }}" class="block px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all">Dự án</a>
                     <a href="{{ route('products.index') }}" class="block px-4 py-3 text-sm font-medium text-gray-300 hover:text-white hover:bg-white/5 rounded-lg transition-all">Cửa hàng</a>
@@ -75,11 +102,11 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                 {{-- Brand --}}
                 <div>
-                    <a href="{{ route('home') }}" class="flex items-center gap-2 mb-4">
-                        <div class="w-8 h-8 rounded-lg gradient-shimmer flex items-center justify-center">
-                            <span class="text-white font-bold text-sm">N</span>
+                    <a href="{{ route('home') }}" class="flex items-center gap-2 mb-4 logo-container">
+                        <div class="w-10 h-10 rounded-xl gradient-shimmer flex items-center justify-center logo-icon">
+                            <span class="text-white font-black text-lg logo-letter">N</span>
                         </div>
-                        <span class="text-lg font-bold text-white">NQT<span class="text-primary">Dev</span></span>
+                        <span class="text-lg font-bold text-white logo-text">NQT<span class="text-primary">Dev</span></span>
                     </a>
                     <p class="text-gray-400 text-sm leading-relaxed">Full-Stack Developer chuyên xây dựng trải nghiệm số với Laravel, WordPress và các công nghệ web hiện đại.</p>
                 </div>
@@ -104,6 +131,9 @@
                         </a>
                         <a href="#" class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:bg-primary/20 hover:text-primary transition-all" aria-label="Email">
                             <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M21.75 6.75v10.5a2.25 2.25 0 0 1-2.25 2.25h-15a2.25 2.25 0 0 1-2.25-2.25V6.75m19.5 0A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25m19.5 0v.243a2.25 2.25 0 0 1-1.07 1.916l-7.5 4.615a2.25 2.25 0 0 1-2.36 0L3.32 8.91a2.25 2.25 0 0 1-1.07-1.916V6.75" /></svg>
+                        </a>
+                        <a href="{{ \App\Models\Setting::getValue('telegram_url', 'https://t.me/nqtdev') }}" target="_blank" class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center text-gray-400 hover:bg-[#0088cc]/20 hover:text-[#0088cc] transition-all" aria-label="Telegram">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.195-.054-.282-.346-.088l-6.406 4.03-2.76-.864c-.6-.18-.61-.593.125-.88l10.814-4.17c.502-.18.948.113.805.823z"/></svg>
                         </a>
                     </div>
                 </div>

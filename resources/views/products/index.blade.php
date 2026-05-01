@@ -22,8 +22,8 @@
             <div class="flex items-center gap-3">
                 <form action="{{ route('products.index') }}" method="GET" class="relative">
                     @if ($currentCategory)<input type="hidden" name="category" value="{{ $currentCategory }}">@endif
-                    <input type="text" name="search" value="{{ $search }}" placeholder="Tìm kiếm..." class="form-input pl-10 py-2 text-sm w-48">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
+                    <input type="text" name="search" value="{{ $search }}" placeholder="Tìm kiếm..." class="form-input !pl-10 py-2 text-sm w-48">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" /></svg>
                 </form>
                 <select onchange="window.location.href=this.value" class="form-input py-2 text-sm w-36">
                     <option value="{{ route('products.index', array_filter(['category' => $currentCategory, 'search' => $search, 'sort' => 'newest'])) }}" {{ $currentSort === 'newest' ? 'selected' : '' }}>Mới nhất</option>

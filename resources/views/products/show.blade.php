@@ -17,33 +17,44 @@
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
             {{-- Left: Images --}}
             <div class="lg:col-span-3 reveal">
-                <div class="glass-card overflow-hidden">
-                    <div class="aspect-video bg-gradient-to-br from-accent/20 to-primary/20 relative">
-                        @if ($product->thumbnail)
-                            <img src="{{ asset('storage/' . $product->thumbnail) }}" alt="{{ $product->title }}" class="w-full h-full object-cover">
-                        @else
-                            <div class="absolute inset-0 flex items-center justify-center">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-white/5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>
-                            </div>
-                        @endif
+                <div class="glass-card p-2">
+                    <div class="swiper product-gallery-swiper rounded-lg overflow-hidden">
+                        <div class="swiper-wrapper">
+                            @if ($product->thumbnail)
+                                <div class="swiper-slide aspect-video bg-surface-dark relative">
+                                    <img src="{{ asset('storage/' . $product->thumbnail) }}" alt="{{ $product->title }}" class="w-full h-full object-cover">
+                                </div>
+                            @else
+                                <div class="swiper-slide aspect-video bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center relative">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-white/5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>
+                                </div>
+                            @endif
+                            
+                            @if (is_array($product->gallery) && count($product->gallery) > 0)
+                                @foreach ($product->gallery as $imagePath)
+                                    <div class="swiper-slide aspect-video bg-surface-dark relative">
+                                        <img src="{{ asset('storage/' . $imagePath) }}" class="w-full h-full object-cover" loading="lazy" alt="Gallery image">
+                                    </div>
+                                @endforeach
+                            @endif
+                        </div>
+                        
+                        <!-- Pagination & Navigation -->
+                        <div class="swiper-pagination"></div>
+                        <div class="swiper-button-prev !text-primary drop-shadow-md"></div>
+                        <div class="swiper-button-next !text-primary drop-shadow-md"></div>
                     </div>
                 </div>
-
-                @if ($product->images->count())
-                    <div class="grid grid-cols-4 gap-2 mt-2">
-                        @foreach ($product->images as $image)
-                            <div class="glass-card overflow-hidden aspect-video">
-                                <img src="{{ asset('storage/' . $image->image_path) }}" alt="{{ $image->alt_text }}" class="w-full h-full object-cover" loading="lazy">
-                            </div>
-                        @endforeach
-                    </div>
-                @endif
             </div>
 
             {{-- Right: Info --}}
             <div class="lg:col-span-2 reveal" style="transition-delay: 0.15s">
                 <div class="glass-card p-6 sticky top-24">
-                    <span class="tech-tag mb-3 inline-block">{{ $product->category->name }}</span>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        @foreach ($product->categories as $cat)
+                            <span class="tech-tag">{{ $cat->name }}</span>
+                        @endforeach
+                    </div>
                     <h1 class="text-2xl font-black text-white mb-3">{{ $product->title }}</h1>
                     <p class="text-gray-400 text-sm leading-relaxed mb-6">{{ $product->excerpt }}</p>
 
@@ -110,12 +121,30 @@
             </div>
         </div>
 
-        {{-- Description --}}
-        <div class="mt-10 reveal">
-            <div class="glass-card p-8">
-                <h2 class="text-xl font-bold text-white mb-6">Chi Tiết Sản Phẩm</h2>
-                <div class="prose-custom max-w-none">
-                    {!! $product->description !!}
+        {{-- Content Tabs --}}
+        <div class="mt-10 reveal" id="product-tabs">
+            <div class="glass-card overflow-hidden">
+                <div class="flex border-b border-white/10">
+                    <button class="tab-btn active px-6 py-4 text-sm font-bold text-white border-b-2 border-primary hover:bg-white/5 transition-colors" data-target="tab-description">
+                        Chi Tiết Sản Phẩm
+                    </button>
+                    @if ($product->changelog)
+                    <button class="tab-btn px-6 py-4 text-sm font-bold text-gray-400 border-b-2 border-transparent hover:text-white hover:bg-white/5 transition-colors" data-target="tab-changelog">
+                        Lịch Sử Cập Nhật (Changelog)
+                    </button>
+                    @endif
+                </div>
+                
+                <div class="p-8">
+                    <div id="tab-description" class="tab-content prose-custom max-w-none">
+                        {!! $product->description !!}
+                    </div>
+                    
+                    @if ($product->changelog)
+                    <div id="tab-changelog" class="tab-content prose-custom max-w-none hidden">
+                        {!! $product->changelog !!}
+                    </div>
+                    @endif
                 </div>
             </div>
         </div>
@@ -133,4 +162,53 @@
         @endif
     </div>
 </section>
+
+<!-- Swiper JS & CSS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const swiper = new Swiper('.product-gallery-swiper', {
+            loop: true,
+            grabCursor: true,
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+                dynamicBullets: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+
+        // Tabs Logic
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const target = btn.getAttribute('data-target');
+                
+                // Reset buttons
+                tabBtns.forEach(b => {
+                    b.classList.remove('active', 'text-white', 'border-primary');
+                    b.classList.add('text-gray-400', 'border-transparent');
+                });
+                
+                // Set active button
+                btn.classList.add('active', 'text-white', 'border-primary');
+                btn.classList.remove('text-gray-400', 'border-transparent');
+                
+                // Hide all contents
+                tabContents.forEach(content => {
+                    content.classList.add('hidden');
+                });
+                
+                // Show target content
+                document.getElementById(target).classList.remove('hidden');
+            });
+        });
+    });
+</script>
 @endsection

@@ -15,7 +15,7 @@
     </a>
     <div class="p-5">
         <div class="flex items-center justify-between mb-2">
-            <span class="text-xs text-accent font-medium">{{ $product->category->name }}</span>
+            <span class="text-xs text-accent font-medium">{{ $product->categories->pluck('name')->join(', ') }}</span>
             <span class="text-xs text-gray-500">{{ $product->download_count }} lượt bán</span>
         </div>
         <a href="{{ route('products.show', $product) }}">
