@@ -30,6 +30,8 @@ class Product extends Model
         'demo_url',
         'source_url',
         'features',
+        'tech_stack_csv',
+        'features_csv',
         'is_featured',
         'download_count',
         'status',
@@ -68,19 +70,19 @@ class Product extends Model
 
     public function getThumbnailUrlAttribute(): string
     {
-        if (!$this->thumbnail) {
+        if (! $this->thumbnail) {
             return asset('assets/images/placeholder.jpg'); // Hoặc ảnh mặc định
         }
-        
+
         if (str_starts_with($this->thumbnail, 'http')) {
             return $this->thumbnail;
         }
-        
+
         if (str_starts_with($this->thumbnail, '/')) {
             return url($this->thumbnail);
         }
 
-        return asset('storage/' . $this->thumbnail);
+        return asset('storage/'.$this->thumbnail);
     }
 
     public function setTechStackCsvAttribute($value): void
