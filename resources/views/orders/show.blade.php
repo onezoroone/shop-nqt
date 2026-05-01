@@ -25,7 +25,7 @@
                             <div class="flex items-center gap-4">
                                 <div class="w-16 h-12 rounded bg-surface-dark flex-shrink-0">
                                     @if ($item->product->thumbnail)
-                                        <img src="{{ asset('storage/' . $item->product->thumbnail) }}" alt="{{ $item->product->title }}" class="w-full h-full object-cover rounded">
+                                        <img src="{{$item->product->thumbnail_url}}" alt="{{ $item->product->title }}" class="w-full h-full object-cover rounded">
                                     @endif
                                 </div>
                                 <div class="flex-1">

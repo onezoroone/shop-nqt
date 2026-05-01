@@ -52,6 +52,23 @@ class Project extends Model
         return implode(', ', $this->tech_stack ?? []);
     }
 
+    public function getThumbnailUrlAttribute(): string
+    {
+        if (!$this->thumbnail) {
+            return asset('assets/images/placeholder.jpg'); // Hoặc ảnh mặc định
+        }
+        
+        if (str_starts_with($this->thumbnail, 'http')) {
+            return $this->thumbnail;
+        }
+        
+        if (str_starts_with($this->thumbnail, '/')) {
+            return $this->thumbnail;
+        }
+
+        return asset('storage/' . $this->thumbnail);
+    }
+
     public function setTechStackCsvAttribute($value)
     {
         $this->attributes['tech_stack'] = json_encode(array_filter(array_map('trim', explode(',', $value))));

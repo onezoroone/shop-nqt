@@ -23,7 +23,7 @@
                         {{-- Thumbnail --}}
                         <div class="w-20 h-14 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 overflow-hidden flex-shrink-0">
                             @if ($item['product']->thumbnail)
-                                <img src="{{ asset('storage/' . $item['product']->thumbnail) }}" alt="{{ $item['product']->title }}" class="w-full h-full object-cover">
+                                <img src="{{$1['product']->thumbnail_url}}" alt="{{ $item['product']->title }}" class="w-full h-full object-cover">
                             @endif
                         </div>
 

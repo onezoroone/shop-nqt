@@ -64,8 +64,7 @@ class ProjectCrudController extends CrudController
         CRUD::field('is_featured')->type('boolean')->label('Featured')->size(3);
         CRUD::field('excerpt')->type('textarea')->attributes(['rows' => 3]);
         CRUD::field('description')->type('wysiwyg');
-        CRUD::field('thumbnail')->type('upload')
-            ->withFiles(['disk' => 'public', 'path' => 'projects']);
+        CRUD::field('thumbnail')->type('browse')->label('Ảnh đại diện (Thumbnail)');
         CRUD::field('tech_stack_csv')->type('textarea')
             ->label('Technologies (comma separated)')->hint('Example: PHP, Laravel, Tailwind');
         CRUD::field('demo_url')->type('url')->size(6)->label('Demo URL');
