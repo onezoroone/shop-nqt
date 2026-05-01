@@ -43,7 +43,7 @@ return [
 
     'allow_shared_folder'      => false,
 
-    'shared_folder_name'       => 'shares',
+    'shared_folder_name'       => '',
 
     /*
     |--------------------------------------------------------------------------
