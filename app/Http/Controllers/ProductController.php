@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Models\Product;
+use App\Models\Setting;
+use Artesaos\SEOTools\Facades\SEOTools;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
@@ -12,23 +14,27 @@ class ProductController extends Controller
 {
     public function index(Request $request): View
     {
-        \Artesaos\SEOTools\Facades\SEOTools::setTitle(\App\Models\Setting::getValue('seo_products_title', 'Sản phẩm'));
-        \Artesaos\SEOTools\Facades\SEOTools::setDescription(\App\Models\Setting::getValue('seo_products_description', ''));
-        \Artesaos\SEOTools\Facades\SEOTools::metatags()->addKeyword(explode(',', \App\Models\Setting::getValue('seo_products_keywords', '')));
-        \Artesaos\SEOTools\Facades\SEOTools::setCanonical(route('products.index'));
-        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->setUrl(route('products.index'));
-        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->addProperty('type', 'website');
-        \Artesaos\SEOTools\Facades\SEOTools::addImages([\App\Models\Setting::getValue('seo_default_image', asset('assets/images/placeholder.jpg'))]);
+        SEOTools::setTitle(Setting::getValue('seo_products_title', 'Sản phẩm'));
+        SEOTools::setDescription(Setting::getValue('seo_products_description', ''));
+        SEOTools::metatags()->addKeyword(explode(',', Setting::getValue('seo_products_keywords', '')));
+        SEOTools::setCanonical(route('products.index'));
+        SEOTools::opengraph()->setUrl(route('products.index'));
+        SEOTools::opengraph()->addProperty('type', 'website');
+        SEOTools::addImages([Setting::getValue('seo_default_image', asset('assets/images/placeholder.jpg'))]);
 
         $categorySlug = $request->query('category');
         $sort = $request->query('sort', 'newest');
         $search = $request->query('search');
 
-        $categories = Cache::remember('product_categories', 3600, function () {
+        $categories = Cache::remember('product_categories', 600, function () {
             return Category::ofType('product')
                 ->ordered()
-                ->withCount(['products' => fn ($q) => $q->published()])
-                ->get();
+                ->get()
+                ->each(function ($category) {
+                    $category->products_count = Product::published()
+                        ->whereHas('categories', fn ($q) => $q->where('categories.id', $category->id))
+                        ->count();
+                });
         });
 
         $products = Product::select('id', 'category_id', 'title', 'slug', 'excerpt', 'thumbnail', 'price', 'sale_price', 'tech_stack', 'download_count', 'published_at')
@@ -60,14 +66,14 @@ class ProductController extends Controller
 
     public function show(Product $product): View
     {
-        \Artesaos\SEOTools\Facades\SEOTools::setTitle($product->meta_title ?: $product->title);
-        \Artesaos\SEOTools\Facades\SEOTools::setDescription($product->meta_description ?: strip_tags($product->excerpt));
-        \Artesaos\SEOTools\Facades\SEOTools::metatags()->addKeyword(explode(',', $product->meta_keywords ?? ''));
-        \Artesaos\SEOTools\Facades\SEOTools::setCanonical(route('products.show', $product));
-        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->setUrl(route('products.show', $product));
-        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->addProperty('type', 'product');
+        SEOTools::setTitle($product->meta_title ?: $product->title);
+        SEOTools::setDescription($product->meta_description ?: strip_tags($product->excerpt));
+        SEOTools::metatags()->addKeyword(explode(',', $product->meta_keywords ?? ''));
+        SEOTools::setCanonical(route('products.show', $product));
+        SEOTools::opengraph()->setUrl(route('products.show', $product));
+        SEOTools::opengraph()->addProperty('type', 'product');
         if ($product->thumbnail_url) {
-            \Artesaos\SEOTools\Facades\SEOTools::addImages([$product->thumbnail_url]);
+            SEOTools::addImages([$product->thumbnail_url]);
         }
 
         $product->load(['categories:id,name,slug']);
