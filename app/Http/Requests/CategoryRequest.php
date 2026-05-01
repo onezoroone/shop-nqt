@@ -13,6 +13,18 @@ class CategoryRequest extends FormRequest
     }
 
     /**
+     * Prepare the data for validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        if (empty($this->slug) && $this->name) {
+            $this->merge([
+                'slug' => \Illuminate\Support\Str::slug($this->name)
+            ]);
+        }
+    }
+
+    /**
      * @return array<string, array<int, mixed>>
      */
     public function rules(): array

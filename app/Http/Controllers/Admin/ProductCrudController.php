@@ -66,8 +66,8 @@ class ProductCrudController extends CrudController
         CRUD::field('status')->type('enum')->size(3);
         CRUD::field('is_featured')->type('boolean')->label('Featured')->size(3);
         CRUD::field('excerpt')->type('textarea')->attributes(['rows' => 3]);
-        CRUD::field('description')->type('wysiwyg')->tab('Thông tin cơ bản');
-        CRUD::field('changelog')->type('wysiwyg')->label('Changelog (Lịch sử cập nhật)')->tab('Changelog');
+        CRUD::field('description')->type('summernote')->tab('Thông tin cơ bản');
+        CRUD::field('changelog')->type('summernote')->label('Changelog (Lịch sử cập nhật)')->tab('Changelog');
         CRUD::field('thumbnail')->type('browse')->label('Ảnh đại diện (Thumbnail)');
         CRUD::field('gallery')->type('gallery_preview')->label('Gallery (chọn nhiều ảnh)');
         CRUD::field('price')->type('number')
