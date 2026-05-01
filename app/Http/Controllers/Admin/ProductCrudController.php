@@ -90,6 +90,33 @@ class ProductCrudController extends CrudController
         CRUD::field('published_at')->type('datetime')->size(6);
     }
 
+    protected function setupShowOperation()
+    {
+        CRUD::column('title')->type('text');
+        CRUD::column('slug')->type('text');
+        CRUD::column('categories')->type('select_multiple')
+            ->entity('categories')->attribute('name')->model(Category::class);
+        CRUD::column('status')->type('enum');
+        CRUD::column('is_featured')->type('boolean')->label('Featured');
+        CRUD::column('excerpt')->type('text')->limit(200);
+        CRUD::column('description')->type('markdown')->label('Description');
+        CRUD::column('changelog')->type('markdown')->label('Changelog');
+        CRUD::column('thumbnail')->type('image')->label('Thumbnail');
+        CRUD::column('gallery')->type('text')->value(function ($entry) {
+            $gallery = is_array($entry->gallery) ? $entry->gallery : json_decode($entry->gallery ?? '[]', true);
+            return implode(', ', $gallery ?: []);
+        })->label('Gallery');
+        CRUD::column('price')->type('number')->prefix('$')->decimals(2);
+        CRUD::column('sale_price')->type('number')->prefix('$')->decimals(2);
+        CRUD::column('download_count')->type('number')->label('Downloads');
+        CRUD::column('demo_url')->type('url')->label('Demo URL');
+        CRUD::column('source_url')->type('url')->label('Source URL');
+        CRUD::column('meta_title')->type('text')->label('Meta Title');
+        CRUD::column('meta_description')->type('text')->label('Meta Description');
+        CRUD::column('meta_keywords')->type('text')->label('Meta Keywords');
+        CRUD::column('published_at')->type('datetime');
+    }
+
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
