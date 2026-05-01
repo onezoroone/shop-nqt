@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class ProductRequest extends FormRequest
@@ -19,7 +20,7 @@ class ProductRequest extends FormRequest
     {
         if (empty($this->slug) && $this->title) {
             $this->merge([
-                'slug' => \Illuminate\Support\Str::slug($this->title)
+                'slug' => Str::slug($this->title),
             ]);
         }
     }
@@ -41,8 +42,8 @@ class ProductRequest extends FormRequest
             'thumbnail' => ['nullable'],
             'price' => ['required', 'numeric', 'min:0'],
             'sale_price' => ['nullable', 'numeric', 'min:0'],
-            'tech_stack' => ['nullable', 'array'],
-            'features' => ['nullable', 'array'],
+            'tech_stack_csv' => ['nullable', 'string'],
+            'features_csv' => ['nullable', 'string'],
             'demo_url' => ['nullable', 'url', 'max:255'],
             'source_url' => ['nullable', 'url', 'max:255'],
             'is_featured' => ['boolean'],
