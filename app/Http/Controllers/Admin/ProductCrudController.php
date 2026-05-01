@@ -21,11 +21,11 @@ use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
  */
 class ProductCrudController extends CrudController
 {
-    use CreateOperation;
+    use CreateOperation { store as traitStore; }
     use DeleteOperation;
     use ListOperation;
     use ShowOperation;
-    use UpdateOperation;
+    use UpdateOperation { update as traitUpdate; }
 
     public function setup()
     {
@@ -76,9 +76,9 @@ class ProductCrudController extends CrudController
             ->prefix('$')->attributes(['step' => '0.01'])->size(4)
             ->hint('Leave empty for no sale');
         CRUD::field('download_count')->type('number')->default(0)->size(4)->label('Downloads');
-        CRUD::field('tech_stack_csv')->type('textarea')
+        CRUD::field('tech_stack')->type('textarea')
             ->label('Technologies (comma separated)')->hint('Example: PHP, Laravel, Tailwind');
-        CRUD::field('features_csv')->type('textarea')
+        CRUD::field('features')->type('textarea')
             ->label('Features (comma separated)')->hint('Example: Secure login, Dark mode, API');
         CRUD::field('demo_url')->type('url')->size(6)->label('Demo URL');
         CRUD::field('source_url')->type('url')->size(6)->label('Link Source Code (Google Drive, vv.)')->hint('Sẽ hiển thị cho khách sau khi thanh toán xong.');
@@ -104,6 +104,7 @@ class ProductCrudController extends CrudController
         CRUD::column('thumbnail')->type('image')->label('Thumbnail');
         CRUD::column('gallery')->type('text')->value(function ($entry) {
             $gallery = is_array($entry->gallery) ? $entry->gallery : json_decode($entry->gallery ?? '[]', true);
+
             return implode(', ', $gallery ?: []);
         })->label('Gallery');
         CRUD::column('price')->type('number')->prefix('$')->decimals(2);
@@ -120,5 +121,35 @@ class ProductCrudController extends CrudController
     protected function setupUpdateOperation()
     {
         $this->setupCreateOperation();
+
+        CRUD::field('tech_stack')->value(implode(', ', $this->crud->getCurrentEntry()->tech_stack ?? []));
+        CRUD::field('features')->value(implode(', ', $this->crud->getCurrentEntry()->features ?? []));
+    }
+
+    /**
+     * Convert comma-separated tech_stack and features strings to arrays before saving.
+     */
+    private function convertCsvFieldsToArrays(): void
+    {
+        $this->crud->setRequest($this->crud->validateRequest());
+        $this->crud->setRequest($this->crud->getRequest()->merge([
+            'tech_stack' => array_values(array_filter(array_map('trim', explode(',', $this->crud->getRequest()->input('tech_stack', ''))))),
+            'features' => array_values(array_filter(array_map('trim', explode(',', $this->crud->getRequest()->input('features', ''))))),
+        ]));
+        $this->crud->unsetValidation();
+    }
+
+    public function store()
+    {
+        $this->convertCsvFieldsToArrays();
+
+        return $this->traitStore();
+    }
+
+    public function update()
+    {
+        $this->convertCsvFieldsToArrays();
+
+        return $this->traitUpdate();
     }
 }

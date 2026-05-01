@@ -30,8 +30,6 @@ class Product extends Model
         'demo_url',
         'source_url',
         'features',
-        'tech_stack_csv',
-        'features_csv',
         'is_featured',
         'download_count',
         'status',
@@ -63,11 +61,6 @@ class Product extends Model
         ];
     }
 
-    public function getTechStackCsvAttribute(): string
-    {
-        return implode(', ', $this->tech_stack ?? []);
-    }
-
     public function getThumbnailUrlAttribute(): string
     {
         if (! $this->thumbnail) {
@@ -83,21 +76,6 @@ class Product extends Model
         }
 
         return asset('storage/'.$this->thumbnail);
-    }
-
-    public function setTechStackCsvAttribute($value): void
-    {
-        $this->attributes['tech_stack'] = json_encode(array_filter(array_map('trim', explode(',', $value))));
-    }
-
-    public function getFeaturesCsvAttribute(): string
-    {
-        return implode(', ', $this->features ?? []);
-    }
-
-    public function setFeaturesCsvAttribute($value): void
-    {
-        $this->attributes['features'] = json_encode(array_filter(array_map('trim', explode(',', $value))));
     }
 
     /**
