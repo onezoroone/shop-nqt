@@ -82,6 +82,11 @@ class ProductCrudController extends CrudController
             ->label('Features (comma separated)')->hint('Example: Secure login, Dark mode, API');
         CRUD::field('demo_url')->type('url')->size(6)->label('Demo URL');
         CRUD::field('source_url')->type('url')->size(6)->label('Link Source Code (Google Drive, vv.)')->hint('Sẽ hiển thị cho khách sau khi thanh toán xong.');
+
+        // SEO Fields
+        CRUD::field('meta_title')->type('text')->tab('SEO')->label('Meta Title')->hint('Tiêu đề hiển thị trên kết quả tìm kiếm (Để trống sẽ tự lấy tiêu đề sản phẩm).');
+        CRUD::field('meta_description')->type('textarea')->tab('SEO')->label('Meta Description')->hint('Mô tả ngắn gọn gọn (tối đa 160 ký tự).');
+        CRUD::field('meta_keywords')->type('text')->tab('SEO')->label('Meta Keywords')->hint('Từ khóa, cách nhau bằng dấu phẩy.');
         CRUD::field('published_at')->type('datetime')->size(6);
     }
 

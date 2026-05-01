@@ -12,6 +12,14 @@ class ProductController extends Controller
 {
     public function index(Request $request): View
     {
+        \Artesaos\SEOTools\Facades\SEOTools::setTitle(\App\Models\Setting::getValue('seo_products_title', 'Sản phẩm'));
+        \Artesaos\SEOTools\Facades\SEOTools::setDescription(\App\Models\Setting::getValue('seo_products_description', ''));
+        \Artesaos\SEOTools\Facades\SEOTools::metatags()->addKeyword(explode(',', \App\Models\Setting::getValue('seo_products_keywords', '')));
+        \Artesaos\SEOTools\Facades\SEOTools::setCanonical(route('products.index'));
+        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->setUrl(route('products.index'));
+        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->addProperty('type', 'website');
+        \Artesaos\SEOTools\Facades\SEOTools::addImages([\App\Models\Setting::getValue('seo_default_image', asset('assets/images/placeholder.jpg'))]);
+
         $categorySlug = $request->query('category');
         $sort = $request->query('sort', 'newest');
         $search = $request->query('search');
@@ -52,6 +60,16 @@ class ProductController extends Controller
 
     public function show(Product $product): View
     {
+        \Artesaos\SEOTools\Facades\SEOTools::setTitle($product->meta_title ?: $product->title);
+        \Artesaos\SEOTools\Facades\SEOTools::setDescription($product->meta_description ?: strip_tags($product->excerpt));
+        \Artesaos\SEOTools\Facades\SEOTools::metatags()->addKeyword(explode(',', $product->meta_keywords ?? ''));
+        \Artesaos\SEOTools\Facades\SEOTools::setCanonical(route('products.show', $product));
+        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->setUrl(route('products.show', $product));
+        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->addProperty('type', 'product');
+        if ($product->thumbnail_url) {
+            \Artesaos\SEOTools\Facades\SEOTools::addImages([$product->thumbnail_url]);
+        }
+
         $product->load(['categories:id,name,slug']);
 
         $categoryIds = $product->categories->pluck('id');

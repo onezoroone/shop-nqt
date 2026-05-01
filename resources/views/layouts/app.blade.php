@@ -4,8 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <meta name="description" content="@yield('meta_description', 'Portfolio và cửa hàng sản phẩm số bởi NQT Dev — Full-Stack Developer chuyên về Laravel, WordPress và các công nghệ web hiện đại.')">
-    <title>@yield('title', 'NQT Dev') — Portfolio & Cửa hàng</title>
+    {!! SEO::generate() !!}
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

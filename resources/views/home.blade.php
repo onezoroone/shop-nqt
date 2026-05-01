@@ -143,7 +143,7 @@
                     <a href="{{ route('projects.show', $project) }}" class="glass-card-hover group overflow-hidden reveal" style="transition-delay: {{ $index * 0.1 }}s" id="featured-project-{{ $project->id }}">
                         <div class="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 relative overflow-hidden">
                             @if ($project->thumbnail)
-                                <img src="{{$1->thumbnail_url}}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                                <img src="{{$project->thumbnail_url}}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                             @else
                                 <div class="absolute inset-0 flex items-center justify-center">
                                     <svg xmlns="http://www.w3.org/2000/svg" class="w-16 h-16 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" /></svg>
@@ -193,7 +193,7 @@
                         <a href="{{ route('products.show', $product) }}">
                             <div class="aspect-[4/3] bg-gradient-to-br from-accent/20 to-primary/20 relative overflow-hidden">
                                 @if ($product->thumbnail)
-                                    <img src="{{$1->thumbnail_url}}" alt="{{ $product->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                                    <img src="{{$product->thumbnail_url}}" alt="{{ $product->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                                 @else
                                     <div class="absolute inset-0 flex items-center justify-center">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>

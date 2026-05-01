@@ -19,6 +19,9 @@ class Category extends Model
         'type',
         'icon',
         'sort_order',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
     ];
 
     /**

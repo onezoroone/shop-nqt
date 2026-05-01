@@ -27,6 +27,9 @@ class Project extends Model
         'sort_order',
         'status',
         'published_at',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
     ];
 
     protected $attributes = [
@@ -63,7 +66,7 @@ class Project extends Model
         }
         
         if (str_starts_with($this->thumbnail, '/')) {
-            return $this->thumbnail;
+            return url($this->thumbnail);
         }
 
         return asset('storage/' . $this->thumbnail);

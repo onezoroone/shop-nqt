@@ -13,6 +13,14 @@ class HomeController extends Controller
 {
     public function __invoke(): View
     {
+        \Artesaos\SEOTools\Facades\SEOTools::setTitle(Setting::getValue('seo_home_title', 'NQT Dev'));
+        \Artesaos\SEOTools\Facades\SEOTools::setDescription(Setting::getValue('seo_home_description', ''));
+        \Artesaos\SEOTools\Facades\SEOTools::metatags()->addKeyword(explode(',', Setting::getValue('seo_home_keywords', '')));
+        \Artesaos\SEOTools\Facades\SEOTools::setCanonical(route('home'));
+        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->setUrl(route('home'));
+        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->addProperty('type', 'website');
+        \Artesaos\SEOTools\Facades\SEOTools::addImages([Setting::getValue('seo_default_image', asset('assets/images/placeholder.jpg'))]);
+
         $featuredProjects = Cache::remember('featured_projects', 1800, function () {
             return Project::select('id', 'category_id', 'title', 'slug', 'excerpt', 'thumbnail', 'tech_stack', 'is_featured')
                 ->with('category:id,name,slug')

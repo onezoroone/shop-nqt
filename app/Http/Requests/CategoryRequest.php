@@ -25,6 +25,9 @@ class CategoryRequest extends FormRequest
             'type' => ['required', Rule::in(['project', 'product'])],
             'icon' => ['nullable', 'string', 'max:100'],
             'sort_order' => ['integer', 'min:0'],
+            'meta_title' => ['nullable', 'string', 'max:255'],
+            'meta_description' => ['nullable', 'string', 'max:500'],
+            'meta_keywords' => ['nullable', 'string', 'max:255'],
         ];
     }
 }

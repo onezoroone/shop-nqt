@@ -34,6 +34,9 @@ class Product extends Model
         'download_count',
         'status',
         'published_at',
+        'meta_title',
+        'meta_description',
+        'meta_keywords',
     ];
 
     protected $attributes = [
@@ -74,7 +77,7 @@ class Product extends Model
         }
         
         if (str_starts_with($this->thumbnail, '/')) {
-            return $this->thumbnail;
+            return url($this->thumbnail);
         }
 
         return asset('storage/' . $this->thumbnail);

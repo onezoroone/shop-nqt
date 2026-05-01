@@ -55,6 +55,11 @@ class CategoryCrudController extends CrudController
         CRUD::field('icon')->type('text')->size(6)
             ->hint('LineAwesome icon class (e.g. la-globe)');
         CRUD::field('sort_order')->type('number')->default(0)->size(6);
+
+        // SEO Fields
+        CRUD::field('meta_title')->type('text')->tab('SEO')->label('Meta Title')->hint('Tiêu đề hiển thị trên kết quả tìm kiếm (Để trống sẽ tự lấy tên thể loại).');
+        CRUD::field('meta_description')->type('textarea')->tab('SEO')->label('Meta Description')->hint('Mô tả ngắn gọn gọn (tối đa 160 ký tự).');
+        CRUD::field('meta_keywords')->type('text')->tab('SEO')->label('Meta Keywords')->hint('Từ khóa, cách nhau bằng dấu phẩy.');
     }
 
     protected function setupUpdateOperation()

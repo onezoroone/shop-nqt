@@ -22,11 +22,24 @@ class SettingSeeder extends Seeder
             'twitter_url' => '',
             'footer_text' => '© 2026 NQT Dev. Built with Laravel & TailwindCSS.',
             'telegram_url' => 'https://t.me/congthangdz',
-            'usdt_wallet_address' => 'TRC20: TKQJUDn75tTRmmz3TMADj9xk3NBDN3qtLw'
+            'usdt_wallet_address' => 'TRC20: TKQJUDn75tTRmmz3TMADj9xk3NBDN3qtLw',
+            'seo_home_title' => 'NQT Dev - Portfolio & Store',
+            'seo_home_description' => 'Portfolio and digital product shop by NQT — a passionate full-stack developer.',
+            'seo_home_keywords' => 'laravel, vuejs, full-stack, developer, shop',
+            'seo_products_title' => 'Cửa hàng Sản phẩm - NQT Dev',
+            'seo_products_description' => 'Khám phá các sản phẩm và source code chất lượng cao từ NQT.',
+            'seo_products_keywords' => 'source code, php, laravel, web templates',
+            'seo_projects_title' => 'Dự án nổi bật - NQT Dev',
+            'seo_projects_description' => 'Các dự án tiêu biểu mà tôi đã thực hiện.',
+            'seo_projects_keywords' => 'portfolio, projects, web development',
+            'seo_default_image' => asset('logo.png'),
         ];
 
         foreach ($settings as $key => $value) {
-            Setting::create(['key' => $key, 'value' => $value]);
+            Setting::firstOrCreate(
+                ['key' => $key],
+                ['value' => $value]
+            );
         }
     }
 }

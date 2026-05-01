@@ -22,7 +22,7 @@
                         <div class="swiper-wrapper">
                             @if ($product->thumbnail)
                                 <div class="swiper-slide aspect-video bg-surface-dark relative">
-                                    <img src="{{$1->thumbnail_url}}" alt="{{ $product->title }}" class="w-full h-full object-cover">
+                                    <img src="{{$product->thumbnail_url}}" alt="{{ $product->title }}" class="w-full h-full object-cover">
                                 </div>
                             @else
                                 <div class="swiper-slide aspect-video bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center relative">
