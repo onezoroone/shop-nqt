@@ -41,7 +41,7 @@
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 10.5V6a3.75 3.75 0 1 0-7.5 0v4.5m11.356-1.993 1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 0 1-1.12-1.243l1.264-12A1.125 1.125 0 0 1 5.513 7.5h12.974c.576 0 1.059.435 1.119 1.007ZM8.625 10.5a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm7.5 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
                         Khám Phá Cửa Hàng
                     </a>
-                    <a href="https://t.me/nqtdev" target="_blank" rel="noopener" class="btn-outline border-[#0088cc] text-[#0088cc] hover:bg-[#0088cc]/10 hover:border-[#0088cc] bg-surface-dark/50 backdrop-blur" style="box-shadow: 0 0 15px rgba(0, 136, 204, 0.2);" id="hero-telegram-btn">
+                    <a href="{{ \App\Models\Setting::getValue('telegram_url', 'https://t.me/nqtdev') }}" target="_blank" rel="noopener" class="btn-outline border-[#0088cc] text-[#0088cc] hover:bg-[#0088cc]/10 hover:border-[#0088cc] bg-surface-dark/50 backdrop-blur" style="box-shadow: 0 0 15px rgba(0, 136, 204, 0.2);" id="hero-telegram-btn">
                         <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.195-.054-.282-.346-.088l-6.406 4.03-2.76-.864c-.6-.18-.61-.593.125-.88l10.814-4.17c.502-.18.948.113.805.823z"/></svg>
                         Nhắn Telegram
                     </a>
