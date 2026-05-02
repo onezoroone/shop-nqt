@@ -155,7 +155,7 @@
                         </div>
                         <div class="p-6">
                             <div class="flex items-center gap-2 mb-3">
-                                <span class="text-xs text-accent font-medium">{{ $product->categories->first()?->name ?? 'Không phân loại' }}</span>
+                                <span class="text-xs text-primary font-medium">{{ $project->category?->name ?? 'Không phân loại' }}</span>
                             </div>
                             <h3 class="text-lg font-bold text-white group-hover:text-primary transition-colors mb-2">{{ $project->title }}</h3>
                             <p class="text-gray-400 text-sm leading-relaxed line-clamp-2">{{ $project->excerpt }}</p>
@@ -199,8 +199,18 @@
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>
                                     </div>
                                 @endif
-                                @if ($product->isOnSale())
-                                    <div class="absolute top-3 left-3 sale-badge">-{{ $product->discount_percent }}%</div>
+                                @if ($product->hasVariants())
+                                    <div class="absolute top-3 right-3 px-2 py-1 text-[10px] font-bold bg-primary/90 text-white rounded-full">{{ $product->variants->count() }} biến thể</div>
+                                @endif
+                                @if ($product->isOnSale() || $product->variants->contains(fn ($v) => $v->isOnSale()))
+                                    @php
+                                        $maxDiscount = $product->hasVariants()
+                                            ? $product->variants->max(fn ($v) => $v->discount_percent)
+                                            : $product->discount_percent;
+                                    @endphp
+                                    @if ($maxDiscount > 0)
+                                        <div class="absolute top-3 left-3 sale-badge">-{{ $maxDiscount }}%</div>
+                                    @endif
                                 @endif
                             </div>
                         </a>
@@ -210,17 +220,27 @@
                                 <h3 class="text-sm font-bold text-white group-hover:text-primary transition-colors mt-1 mb-2 line-clamp-2">{{ $product->title }}</h3>
                             </a>
                             <div class="flex items-center gap-2 mb-3">
-                                @if ($product->isOnSale())
+                                @if ($product->hasVariants())
+                                    <span class="text-xs text-gray-400">Từ</span>
+                                    <span class="text-lg font-bold text-success">${{ $product->starting_price }}</span>
+                                @elseif ($product->isOnSale())
                                     <span class="text-lg font-bold text-success">${{ $product->sale_price }}</span>
                                     <span class="text-sm text-gray-500 line-through">${{ $product->price }}</span>
                                 @else
                                     <span class="text-lg font-bold text-success">${{ $product->price }}</span>
                                 @endif
                             </div>
-                            <button data-cart-add="{{ route('cart.add', $product) }}" class="w-full btn-primary text-sm justify-center py-2.5">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" /></svg>
-                                Thêm vào Giỏ
-                            </button>
+                            @if ($product->hasVariants())
+                                <a href="{{ route('products.show', $product) }}" class="w-full btn-primary text-sm justify-center py-2.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 4.5l7.5 7.5-7.5 7.5" /></svg>
+                                    Chọn Biến Thể
+                                </a>
+                            @else
+                                <button data-cart-add="{{ route('cart.add', $product) }}" class="w-full btn-primary text-sm justify-center py-2.5">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" /></svg>
+                                    Thêm vào Giỏ
+                                </button>
+                            @endif
                         </div>
                     </div>
                 @endforeach

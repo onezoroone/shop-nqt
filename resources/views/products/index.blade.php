@@ -34,6 +34,14 @@
             </div>
         </div>
 
+        @if (!empty($currentTech))
+            <div class="flex items-center gap-3 mb-6 reveal">
+                <span class="text-sm text-gray-400">Đang lọc theo công nghệ:</span>
+                <span class="tech-tag bg-primary/20 border-primary/40 text-primary">{{ $currentTech }}</span>
+                <a href="{{ route('products.index', array_filter(['category' => $currentCategory, 'sort' => $currentSort, 'search' => $search])) }}" class="text-xs text-gray-500 hover:text-danger transition-colors ml-1" title="Bỏ lọc">✕ Xóa bộ lọc</a>
+            </div>
+        @endif
+
         @if ($products->count())
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 @foreach ($products as $i => $product)

@@ -25,6 +25,7 @@ class ProductController extends Controller
         $categorySlug = $request->query('category');
         $sort = $request->query('sort', 'newest');
         $search = $request->query('search');
+        $tech = $request->query('tech');
 
         $categories = Cache::remember('product_categories', 600, function () {
             return Category::ofType('product')
@@ -38,7 +39,7 @@ class ProductController extends Controller
         });
 
         $products = Product::select('id', 'category_id', 'title', 'slug', 'excerpt', 'thumbnail', 'price', 'sale_price', 'tech_stack', 'download_count', 'published_at')
-            ->with('categories:id,name,slug')
+            ->with(['categories:id,name,slug', 'variants'])
             ->published()
             ->when($categorySlug, function ($query) use ($categorySlug) {
                 $query->whereHas('categories', fn ($q) => $q->where('slug', $categorySlug));
@@ -48,6 +49,9 @@ class ProductController extends Controller
                     $q->where('title', 'like', "%{$search}%")
                         ->orWhere('excerpt', 'like', "%{$search}%");
                 });
+            })
+            ->when($tech, function ($query) use ($tech) {
+                $query->where('tech_stack', 'like', '%"'.str_replace(['%', '_'], ['\%', '\_'], $tech).'"%');
             })
             ->when($sort === 'price_low', fn ($q) => $q->orderBy('price'))
             ->when($sort === 'price_high', fn ($q) => $q->orderByDesc('price'))
@@ -61,6 +65,7 @@ class ProductController extends Controller
             'currentCategory' => $categorySlug,
             'currentSort' => $sort,
             'search' => $search,
+            'currentTech' => $tech,
         ]);
     }
 
@@ -76,12 +81,12 @@ class ProductController extends Controller
             SEOTools::addImages([$product->thumbnail_url]);
         }
 
-        $product->load(['categories:id,name,slug']);
+        $product->load(['categories:id,name,slug', 'variants']);
 
         $categoryIds = $product->categories->pluck('id');
 
         $relatedProducts = Product::select('id', 'category_id', 'title', 'slug', 'excerpt', 'thumbnail', 'price', 'sale_price', 'download_count')
-            ->with('categories:id,name,slug')
+            ->with(['categories:id,name,slug', 'variants'])
             ->published()
             ->whereHas('categories', fn ($q) => $q->whereIn('categories.id', $categoryIds))
             ->where('id', '!=', $product->id)

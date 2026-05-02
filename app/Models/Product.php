@@ -95,11 +95,45 @@ class Product extends Model
     }
 
     /**
+     * @return HasMany<ProductVariant, $this>
+     */
+    public function variants(): HasMany
+    {
+        return $this->hasMany(ProductVariant::class)->orderBy('sort_order');
+    }
+
+    /**
      * @return HasMany<ProductImage, $this>
      */
     public function images(): HasMany
     {
         return $this->hasMany(ProductImage::class)->orderBy('sort_order');
+    }
+
+    public function hasVariants(): bool
+    {
+        return $this->variants->isNotEmpty();
+    }
+
+    /**
+     * Get the default variant (first with is_default=true, or first by sort_order).
+     */
+    public function getDefaultVariant(): ?ProductVariant
+    {
+        return $this->variants->firstWhere('is_default', true)
+            ?? $this->variants->first();
+    }
+
+    /**
+     * Starting price across all variants (for "Từ $X" display).
+     */
+    public function getStartingPriceAttribute(): string
+    {
+        if ($this->variants->isEmpty()) {
+            return $this->current_price;
+        }
+
+        return $this->variants->min(fn (ProductVariant $v) => $v->current_price);
     }
 
     public function scopePublished(Builder $query): Builder

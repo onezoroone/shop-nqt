@@ -32,19 +32,25 @@
                                     <a href="{{ route('products.show', $item->product) }}" class="text-sm font-semibold text-white hover:text-primary transition-colors">
                                         {{ $item->product->title }}
                                     </a>
+                                    @if ($item->variant_name)
+                                        <span class="text-xs text-accent ml-1">— {{ $item->variant_name }}</span>
+                                    @endif
                                     <p class="text-xs text-gray-400 mt-1">${{ number_format($item->price, 2) }} x {{ $item->quantity }}</p>
                                 </div>
                                 <div class="text-right">
                                     <span class="text-sm font-bold text-white">${{ number_format($item->subtotal, 2) }}</span>
                                 </div>
                             </div>
-                            @if (($order->status === 'paid' || $order->status === 'completed') && !empty($item->product->source_url))
+                            @php
+                                $downloadUrl = $item->variant?->source_url ?? $item->product->source_url;
+                            @endphp
+                            @if (($order->status === 'paid' || $order->status === 'completed') && !empty($downloadUrl))
                                 <div class="mt-2 ml-20">
-                                    <a href="{{ $item->product->source_url }}" target="_blank" rel="noopener" class="inline-flex items-center text-sm font-medium text-success hover:text-success/80 transition-colors bg-success/10 px-3 py-1.5 rounded-lg">
+                                    <a href="{{ $downloadUrl }}" target="_blank" rel="noopener" class="inline-flex items-center text-sm font-medium text-success hover:text-success/80 transition-colors bg-success/10 px-3 py-1.5 rounded-lg">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                             <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
                                         </svg>
-                                        Tải Source Code
+                                        Tải Source Code{{ $item->variant_name ? ' (' . $item->variant_name . ')' : '' }}
                                     </a>
                                 </div>
                             @endif

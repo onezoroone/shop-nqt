@@ -19,7 +19,7 @@
             <div id="cart-content">
                 <div class="space-y-4 mb-8">
                 @foreach ($cartItems as $index => $item)
-                    <div class="glass-card p-4 flex items-center gap-4 reveal" style="transition-delay: {{ $index * 0.05 }}s" id="cart-item-{{ $item['product']->id }}">
+                    <div class="glass-card p-4 flex items-center gap-4 reveal" style="transition-delay: {{ $index * 0.05 }}s" id="cart-item-{{ $item['cart_key'] }}">
                         {{-- Thumbnail --}}
                         <div class="w-20 h-14 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 overflow-hidden flex-shrink-0">
                             @if ($item['product']->thumbnail)
@@ -32,12 +32,24 @@
                             <a href="{{ route('products.show', $item['product']) }}" class="text-sm font-bold text-white hover:text-primary transition-colors line-clamp-1">
                                 {{ $item['product']->title }}
                             </a>
+                            @if ($item['variant'])
+                                <div class="text-xs text-accent mt-0.5">📦 {{ $item['variant']->name }}</div>
+                            @endif
                             <div class="flex items-center gap-2 mt-1">
-                                @if ($item['product']->isOnSale())
-                                    <span class="text-sm font-bold text-success">${{ $item['product']->sale_price }}</span>
-                                    <span class="text-xs text-gray-500 line-through">${{ $item['product']->price }}</span>
+                                @if ($item['variant'])
+                                    @if ($item['variant']->isOnSale())
+                                        <span class="text-sm font-bold text-success">${{ $item['variant']->sale_price }}</span>
+                                        <span class="text-xs text-gray-500 line-through">${{ $item['variant']->price }}</span>
+                                    @else
+                                        <span class="text-sm font-bold text-success">${{ $item['variant']->price }}</span>
+                                    @endif
                                 @else
-                                    <span class="text-sm font-bold text-success">${{ $item['product']->price }}</span>
+                                    @if ($item['product']->isOnSale())
+                                        <span class="text-sm font-bold text-success">${{ $item['product']->sale_price }}</span>
+                                        <span class="text-xs text-gray-500 line-through">${{ $item['product']->price }}</span>
+                                    @else
+                                        <span class="text-sm font-bold text-success">${{ $item['product']->price }}</span>
+                                    @endif
                                 @endif
                             </div>
                         </div>
@@ -46,6 +58,7 @@
                         <form action="{{ route('cart.update', $item['product']) }}" method="POST" class="flex items-center gap-2">
                             @csrf
                             @method('PATCH')
+                            <input type="hidden" name="cart_key" value="{{ $item['cart_key'] }}">
                             <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="99" class="form-input w-16 text-center py-1.5 text-sm" onchange="this.form.submit()">
                         </form>
 
@@ -58,6 +71,7 @@
                         <form action="{{ route('cart.remove', $item['product']) }}" method="POST">
                             @csrf
                             @method('DELETE')
+                            <input type="hidden" name="cart_key" value="{{ $item['cart_key'] }}">
                             <button type="submit" class="p-2 text-gray-500 hover:text-danger transition-colors" title="Remove">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
                             </button>

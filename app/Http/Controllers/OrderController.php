@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Order;
 use App\Models\Product;
+use App\Models\ProductVariant;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -18,26 +19,52 @@ class OrderController extends Controller
             return redirect()->route('cart.index')->withErrors(['cart' => 'Giỏ hàng của bạn đang trống!']);
         }
 
-        $productIds = array_keys($cart);
-        $products = Product::whereIn('id', $productIds)->get()->keyBy('id');
+        // Collect product and variant IDs
+        $productIds = [];
+        $variantIds = [];
+        foreach (array_keys($cart) as $key) {
+            $parts = explode('-', $key, 2);
+            $productIds[] = (int) $parts[0];
+            if (isset($parts[1])) {
+                $variantIds[] = (int) $parts[1];
+            }
+        }
+
+        $products = Product::whereIn('id', array_unique($productIds))->get()->keyBy('id');
+        $variants = ProductVariant::whereIn('id', array_unique($variantIds))->get()->keyBy('id');
 
         $total = 0;
         $orderItems = [];
 
-        foreach ($cart as $productId => $quantity) {
-            if ($products->has($productId)) {
-                $product = $products[$productId];
-                $itemPrice = $product->isOnSale() ? (float) $product->sale_price : (float) $product->price;
-                $subtotal = $itemPrice * $quantity;
-                $total += $subtotal;
+        foreach ($cart as $cartKey => $quantity) {
+            $parts = explode('-', $cartKey, 2);
+            $productId = (int) $parts[0];
+            $variantId = isset($parts[1]) ? (int) $parts[1] : null;
 
-                $orderItems[] = [
-                    'product_id' => $productId,
-                    'price' => $itemPrice,
-                    'quantity' => $quantity,
-                    'subtotal' => $subtotal,
-                ];
+            if (! $products->has($productId)) {
+                continue;
             }
+
+            $product = $products[$productId];
+            $variant = $variantId ? ($variants[$variantId] ?? null) : null;
+
+            if ($variant) {
+                $itemPrice = $variant->isOnSale() ? (float) $variant->sale_price : (float) $variant->price;
+            } else {
+                $itemPrice = $product->isOnSale() ? (float) $product->sale_price : (float) $product->price;
+            }
+
+            $subtotal = $itemPrice * $quantity;
+            $total += $subtotal;
+
+            $orderItems[] = [
+                'product_id' => $productId,
+                'product_variant_id' => $variant?->id,
+                'variant_name' => $variant?->name,
+                'price' => $itemPrice,
+                'quantity' => $quantity,
+                'subtotal' => $subtotal,
+            ];
         }
 
         if ($total == 0) {

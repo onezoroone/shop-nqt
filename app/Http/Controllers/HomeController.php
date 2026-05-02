@@ -6,6 +6,7 @@ use App\Models\Product;
 use App\Models\Project;
 use App\Models\Setting;
 use App\Models\Skill;
+use Artesaos\SEOTools\Facades\SEOTools;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
 
@@ -13,13 +14,13 @@ class HomeController extends Controller
 {
     public function __invoke(): View
     {
-        \Artesaos\SEOTools\Facades\SEOTools::setTitle(Setting::getValue('seo_home_title', 'NQT Dev'));
-        \Artesaos\SEOTools\Facades\SEOTools::setDescription(Setting::getValue('seo_home_description', ''));
-        \Artesaos\SEOTools\Facades\SEOTools::metatags()->addKeyword(explode(',', Setting::getValue('seo_home_keywords', '')));
-        \Artesaos\SEOTools\Facades\SEOTools::setCanonical(route('home'));
-        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->setUrl(route('home'));
-        \Artesaos\SEOTools\Facades\SEOTools::opengraph()->addProperty('type', 'website');
-        \Artesaos\SEOTools\Facades\SEOTools::addImages([Setting::getValue('seo_default_image', asset('assets/images/placeholder.jpg'))]);
+        SEOTools::setTitle(Setting::getValue('seo_home_title', 'NQT Dev'));
+        SEOTools::setDescription(Setting::getValue('seo_home_description', ''));
+        SEOTools::metatags()->addKeyword(explode(',', Setting::getValue('seo_home_keywords', '')));
+        SEOTools::setCanonical(route('home'));
+        SEOTools::opengraph()->setUrl(route('home'));
+        SEOTools::opengraph()->addProperty('type', 'website');
+        SEOTools::addImages([Setting::getValue('seo_default_image', asset('assets/images/placeholder.jpg'))]);
 
         $featuredProjects = Cache::remember('featured_projects', 1800, function () {
             return Project::select('id', 'category_id', 'title', 'slug', 'excerpt', 'thumbnail', 'tech_stack', 'is_featured')
@@ -33,7 +34,7 @@ class HomeController extends Controller
 
         $featuredProducts = Cache::remember('featured_products', 1800, function () {
             return Product::select('id', 'category_id', 'title', 'slug', 'excerpt', 'thumbnail', 'price', 'sale_price', 'tech_stack', 'is_featured', 'download_count')
-                ->with('category:id,name,slug')
+                ->with(['categories:id,name,slug', 'variants'])
                 ->published()
                 ->featured()
                 ->ordered()
