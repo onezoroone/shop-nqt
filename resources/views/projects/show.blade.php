@@ -18,7 +18,7 @@
             {{-- Project Header --}}
             <div class="reveal">
                 <div class="flex items-center gap-3 mb-4">
-                    <span class="tech-tag">{{ $project->category->name }}</span>
+                    <span class="tech-tag">{{ $project->category?->name ?? 'Không phân loại' }}</span>
                     @if ($project->is_featured)
                         <span class="px-2 py-1 text-xs font-bold bg-warning/20 text-warning rounded-full">⭐ Nổi bật</span>
                     @endif

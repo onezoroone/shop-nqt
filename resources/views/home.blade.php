@@ -155,7 +155,7 @@
                         </div>
                         <div class="p-6">
                             <div class="flex items-center gap-2 mb-3">
-                                <span class="text-xs text-primary font-medium">{{ $project->category->name }}</span>
+                                <span class="text-xs text-accent font-medium">{{ $product->categories->first()?->name ?? 'Không phân loại' }}</span>
                             </div>
                             <h3 class="text-lg font-bold text-white group-hover:text-primary transition-colors mb-2">{{ $project->title }}</h3>
                             <p class="text-gray-400 text-sm leading-relaxed line-clamp-2">{{ $project->excerpt }}</p>
@@ -205,7 +205,7 @@
                             </div>
                         </a>
                         <div class="p-5">
-                            <span class="text-xs text-accent font-medium">{{ $product->category->name }}</span>
+                            <span class="text-xs text-accent font-medium">{{ $product->categories->first()?->name ?? 'Không phân loại' }}</span>
                             <a href="{{ route('products.show', $product) }}">
                                 <h3 class="text-sm font-bold text-white group-hover:text-primary transition-colors mt-1 mb-2 line-clamp-2">{{ $product->title }}</h3>
                             </a>

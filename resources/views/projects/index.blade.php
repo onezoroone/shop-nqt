@@ -44,7 +44,7 @@
                             </div>
                             <div class="p-5">
                                 <div class="flex items-center justify-between mb-2">
-                                    <span class="text-xs text-primary font-medium">{{ $project->category->name }}</span>
+                                    <span class="text-xs text-primary font-medium">{{ $project->category?->name ?? 'Không phân loại' }}</span>
                                     <span class="text-xs text-gray-500">{{ $project->published_at?->format('M Y') }}</span>
                                 </div>
                                 <h3 class="text-base font-bold text-white group-hover:text-primary transition-colors mb-2">{{ $project->title }}</h3>
