@@ -17,13 +17,28 @@
         <div class="grid grid-cols-1 lg:grid-cols-5 gap-10">
             {{-- Left: Images --}}
             <div class="lg:col-span-3 reveal">
+                @php
+                    $hasGallery = is_array($product->gallery) && count($product->gallery) > 0;
+                    $lightboxImages = [];
+                    if ($product->thumbnail) {
+                        $lightboxImages[] = ['url' => $product->thumbnail_url, 'alt' => $product->title];
+                    }
+                    if ($hasGallery) {
+                        foreach ($product->gallery as $imagePath) {
+                            $lightboxImages[] = ['url' => asset('storage/' . $imagePath), 'alt' => $product->title];
+                        }
+                    }
+                    $lightboxIndex = 0;
+                @endphp
                 <div class="glass-card p-2">
                     {{-- Main Slider --}}
                     <div class="swiper product-gallery-swiper rounded-lg overflow-hidden">
                         <div class="swiper-wrapper">
                             @if ($product->thumbnail)
                                 <div class="swiper-slide aspect-video bg-surface-dark relative">
-                                    <img src="{{$product->thumbnail_url}}" alt="{{ $product->title }}" class="w-full h-full object-cover">
+                                    <img src="{{$product->thumbnail_url}}" alt="{{ $product->title }}"
+                                        class="w-full h-full object-cover cursor-zoom-in gallery-lightbox-trigger"
+                                        data-lightbox-index="{{ $lightboxIndex++ }}" role="button" tabindex="0">
                                 </div>
                             @else
                                 <div class="swiper-slide aspect-video bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center relative">
@@ -31,10 +46,11 @@
                                 </div>
                             @endif
 
-                            @if (is_array($product->gallery) && count($product->gallery) > 0)
+                            @if ($hasGallery)
                                 @foreach ($product->gallery as $imagePath)
                                     <div class="swiper-slide aspect-video bg-surface-dark relative">
-                                        <img src="{{ asset('storage/' . $imagePath) }}" class="w-full h-full object-cover" loading="lazy" alt="Gallery image">
+                                        <img src="{{ asset('storage/' . $imagePath) }}" class="w-full h-full object-cover cursor-zoom-in gallery-lightbox-trigger" loading="lazy" alt="Gallery image"
+                                            data-lightbox-index="{{ $lightboxIndex++ }}" role="button" tabindex="0">
                                     </div>
                                 @endforeach
                             @endif
@@ -47,7 +63,7 @@
 
                     {{-- Thumbnail Strip --}}
                     @php
-                        $hasGallery = is_array($product->gallery) && count($product->gallery) > 0;
+                        $thumbLightboxIndex = 0;
                         $totalSlides = ($product->thumbnail ? 1 : 1) + ($hasGallery ? count($product->gallery) : 0);
                     @endphp
                     @if ($totalSlides > 1)
@@ -55,7 +71,8 @@
                             <div class="swiper-wrapper">
                                 @if ($product->thumbnail)
                                     <div class="swiper-slide !w-20 !h-14 rounded-md overflow-hidden cursor-pointer opacity-50 border-2 border-transparent transition-all">
-                                        <img src="{{$product->thumbnail_url}}" alt="Thumb" class="w-full h-full object-cover">
+                                        <img src="{{$product->thumbnail_url}}" alt="Thumb" class="w-full h-full object-cover gallery-lightbox-trigger"
+                                            data-lightbox-index="{{ $thumbLightboxIndex++ }}" role="button" tabindex="0">
                                     </div>
                                 @else
                                     <div class="swiper-slide !w-20 !h-14 rounded-md overflow-hidden cursor-pointer opacity-50 border-2 border-transparent bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
@@ -66,7 +83,8 @@
                                 @if ($hasGallery)
                                     @foreach ($product->gallery as $imagePath)
                                         <div class="swiper-slide !w-20 !h-14 rounded-md overflow-hidden cursor-pointer opacity-50 border-2 border-transparent transition-all">
-                                            <img src="{{ asset('storage/' . $imagePath) }}" class="w-full h-full object-cover" loading="lazy" alt="Thumb">
+                                            <img src="{{ asset('storage/' . $imagePath) }}" class="w-full h-full object-cover gallery-lightbox-trigger" loading="lazy" alt="Thumb"
+                                                data-lightbox-index="{{ $thumbLightboxIndex++ }}" role="button" tabindex="0">
                                         </div>
                                     @endforeach
                                 @endif
@@ -74,6 +92,28 @@
                         </div>
                     @endif
                 </div>
+
+                @if (count($lightboxImages) > 0)
+                    <div id="product-lightbox" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="Xem ảnh toàn màn hình">
+                        <button type="button" class="absolute inset-0 bg-black/95 cursor-zoom-out" data-lightbox-close aria-label="Đóng"></button>
+
+                        <button type="button" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors flex items-center justify-center" data-lightbox-close aria-label="Đóng">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                        </button>
+
+                        @if (count($lightboxImages) > 1)
+                            <button type="button" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors flex items-center justify-center" data-lightbox-prev aria-label="Ảnh trước">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+                            </button>
+                            <button type="button" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors flex items-center justify-center" data-lightbox-next aria-label="Ảnh sau">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                            </button>
+                            <span id="product-lightbox-counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 text-sm text-white/70 tabular-nums"></span>
+                        @endif
+
+                        <img id="product-lightbox-img" src="" alt="" class="relative z-[1] max-w-full max-h-[90vh] object-contain select-none pointer-events-none">
+                    </div>
+                @endif
             </div>
 
             {{-- Right: Info --}}
@@ -236,12 +276,12 @@
                     </button>
                     @endif
                 </div>
-                
+
                 <div class="p-8">
                     <div id="tab-description" class="tab-content prose-custom max-w-none">
                         {!! $product->description !!}
                     </div>
-                    
+
                     @if ($product->changelog)
                     <div id="tab-changelog" class="tab-content prose-custom max-w-none hidden">
                         {!! $product->changelog !!}
@@ -272,6 +312,9 @@
         opacity: 1 !important;
         border-color: var(--primary, #6366f1) !important;
     }
+    #product-lightbox:not(.hidden) {
+        display: flex;
+    }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
 <script>
@@ -299,6 +342,89 @@
             thumbs: thumbsSwiper ? { swiper: thumbsSwiper } : undefined,
         });
 
+        // Fullscreen lightbox
+        const lightboxEl = document.getElementById('product-lightbox');
+        const lightboxImages = @json($lightboxImages);
+        if (lightboxEl && lightboxImages.length > 0) {
+            const lightboxImg = document.getElementById('product-lightbox-img');
+            const lightboxCounter = document.getElementById('product-lightbox-counter');
+            let lightboxCurrentIndex = 0;
+
+            const renderLightbox = () => {
+                const image = lightboxImages[lightboxCurrentIndex];
+                lightboxImg.src = image.url;
+                lightboxImg.alt = image.alt;
+                if (lightboxCounter) {
+                    lightboxCounter.textContent = (lightboxCurrentIndex + 1) + ' / ' + lightboxImages.length;
+                }
+            };
+
+            const openLightbox = (index) => {
+                if (index < 0 || index >= lightboxImages.length) {
+                    return;
+                }
+                lightboxCurrentIndex = index;
+                renderLightbox();
+                lightboxEl.classList.remove('hidden');
+                document.body.classList.add('overflow-hidden');
+            };
+
+            const closeLightbox = () => {
+                lightboxEl.classList.add('hidden');
+                document.body.classList.remove('overflow-hidden');
+                lightboxImg.removeAttribute('src');
+            };
+
+            const showPrev = () => {
+                lightboxCurrentIndex = (lightboxCurrentIndex - 1 + lightboxImages.length) % lightboxImages.length;
+                renderLightbox();
+            };
+
+            const showNext = () => {
+                lightboxCurrentIndex = (lightboxCurrentIndex + 1) % lightboxImages.length;
+                renderLightbox();
+            };
+
+            document.querySelectorAll('.gallery-lightbox-trigger').forEach((trigger) => {
+                const open = () => openLightbox(parseInt(trigger.dataset.lightboxIndex, 10));
+                trigger.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    open();
+                });
+                trigger.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter' || e.key === ' ') {
+                        e.preventDefault();
+                        open();
+                    }
+                });
+            });
+
+            lightboxEl.querySelectorAll('[data-lightbox-close]').forEach((btn) => {
+                btn.addEventListener('click', closeLightbox);
+            });
+            lightboxEl.querySelector('[data-lightbox-prev]')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showPrev();
+            });
+            lightboxEl.querySelector('[data-lightbox-next]')?.addEventListener('click', (e) => {
+                e.stopPropagation();
+                showNext();
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (lightboxEl.classList.contains('hidden')) {
+                    return;
+                }
+                if (e.key === 'Escape') {
+                    closeLightbox();
+                } else if (e.key === 'ArrowLeft' && lightboxImages.length > 1) {
+                    showPrev();
+                } else if (e.key === 'ArrowRight' && lightboxImages.length > 1) {
+                    showNext();
+                }
+            });
+        }
+
         // Tabs Logic
         const tabBtns = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
@@ -306,22 +432,22 @@
         tabBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const target = btn.getAttribute('data-target');
-                
+
                 // Reset buttons
                 tabBtns.forEach(b => {
                     b.classList.remove('active', 'text-white', 'border-primary');
                     b.classList.add('text-gray-400', 'border-transparent');
                 });
-                
+
                 // Set active button
                 btn.classList.add('active', 'text-white', 'border-primary');
                 btn.classList.remove('text-gray-400', 'border-transparent');
-                
+
                 // Hide all contents
                 tabContents.forEach(content => {
                     content.classList.add('hidden');
                 });
-                
+
                 // Show target content
                 document.getElementById(target).classList.remove('hidden');
             });
@@ -350,7 +476,7 @@
                         const container = opt.querySelector('div');
                         const dot = opt.querySelector('.w-5');
                         const innerDot = opt.querySelector('.w-2\\.5');
-                        
+
                         container.classList.remove('border-primary', 'bg-primary/10');
                         container.classList.add('border-white/10', 'bg-white/5');
                         dot.classList.remove('border-primary');
@@ -362,7 +488,7 @@
                     const activeContainer = option.querySelector('div');
                     const activeDot = option.querySelector('.w-5');
                     const activeInnerDot = option.querySelector('.w-2\\.5');
-                    
+
                     activeContainer.classList.add('border-primary', 'bg-primary/10');
                     activeContainer.classList.remove('border-white/10', 'bg-white/5');
                     activeDot.classList.add('border-primary');

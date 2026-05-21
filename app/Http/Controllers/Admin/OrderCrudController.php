@@ -9,6 +9,7 @@ use Backpack\CRUD\app\Http\Controllers\Operations\ListOperation;
 use Backpack\CRUD\app\Http\Controllers\Operations\ShowOperation;
 use Backpack\CRUD\app\Http\Controllers\Operations\UpdateOperation;
 use Backpack\CRUD\app\Library\CrudPanel\CrudPanelFacade as CRUD;
+use Illuminate\Support\Facades\DB;
 
 class OrderCrudController extends CrudController
 {
@@ -65,9 +66,26 @@ class OrderCrudController extends CrudController
 
     public function approve($id)
     {
-        $order = Order::findOrFail($id);
-        $order->status = 'paid';
-        $order->save();
+        DB::transaction(function () use ($id): void {
+            $order = Order::with('items')->lockForUpdate()->findOrFail($id);
+
+            if ($order->status === 'paid') {
+                return;
+            }
+
+            $order->status = 'paid';
+            $order->save();
+
+            foreach ($order->items as $item) {
+                if (! $item->product_id || $item->quantity <= 0) {
+                    continue;
+                }
+
+                DB::table('products')
+                    ->where('id', $item->product_id)
+                    ->increment('download_count', (int) $item->quantity);
+            }
+        });
 
         return 1;
     }
