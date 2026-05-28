@@ -27,8 +27,63 @@ class OrderCrudController extends CrudController
 
     protected function setupListOperation()
     {
+        CRUD::addClause('with', ['user.orders', 'items.product']);
+
         CRUD::column('id')->label('ID');
-        CRUD::column('user_id')->type('select')->entity('user')->attribute('name')->label('Khách hàng');
+        CRUD::addColumn([
+            'name' => 'customer_info',
+            'label' => 'Khách hàng',
+            'type' => 'closure',
+            'function' => function (Order $entry): string {
+                $name = $entry->user?->name ?? 'N/A';
+                $email = $entry->user?->email;
+
+                if (! $email) {
+                    return $name;
+                }
+
+                return sprintf('%s (%s)', $name, $email);
+            },
+        ]);
+        CRUD::addColumn([
+            'name' => 'customer_orders_count',
+            'label' => 'Số đơn của user',
+            'type' => 'closure',
+            'function' => function (Order $entry): string {
+                return (string) ($entry->user?->orders?->count() ?? 0);
+            },
+        ]);
+        CRUD::addColumn([
+            'name' => 'products_summary',
+            'label' => 'Sản phẩm đã mua',
+            'type' => 'closure',
+            'function' => function (Order $entry): string {
+                $products = $entry->items
+                    ->map(function ($item): string {
+                        $title = $item->product?->title ?? 'Sản phẩm đã xóa';
+
+                        if ($item->variant_name) {
+                            $title .= ' - '.$item->variant_name;
+                        }
+
+                        return $title.' x'.$item->quantity;
+                    })
+                    ->take(3)
+                    ->implode(', ');
+
+                if ($products === '') {
+                    return '-';
+                }
+
+                $remaining = $entry->items->count() - 3;
+
+                if ($remaining > 0) {
+                    return $products.' (+'.$remaining.' sản phẩm)';
+                }
+
+                return $products;
+            },
+        ]);
         CRUD::column('total_amount')->type('number')->prefix('$')->label('Tổng tiền');
         CRUD::column('status')->type('enum')->options([
             'pending' => 'Chờ thanh toán',
@@ -62,6 +117,32 @@ class OrderCrudController extends CrudController
     {
         $this->setupListOperation();
         CRUD::column('notes')->label('Ghi chú');
+        CRUD::addColumn([
+            'name' => 'products_detail',
+            'label' => 'Chi tiết sản phẩm',
+            'type' => 'closure',
+            'escaped' => false,
+            'function' => function (Order $entry): string {
+                if ($entry->items->isEmpty()) {
+                    return 'Không có sản phẩm.';
+                }
+
+                return $entry->items
+                    ->map(function ($item): string {
+                        $title = e($item->product?->title ?? 'Sản phẩm đã xóa');
+                        $variant = $item->variant_name ? ' - '.e($item->variant_name) : '';
+
+                        return sprintf(
+                            '<div>%s%s x%d - $%s</div>',
+                            $title,
+                            $variant,
+                            (int) $item->quantity,
+                            number_format((float) $item->subtotal, 2)
+                        );
+                    })
+                    ->implode('');
+            },
+        ]);
     }
 
     public function approve($id)

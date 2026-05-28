@@ -279,7 +279,7 @@
 
                 <div class="p-8">
                     <div id="tab-description" class="tab-content prose-custom max-w-none">
-                        {!! $product->description !!}
+                        {!! html_entity_decode($product->description) !!}
                     </div>
 
                     @if ($product->changelog)

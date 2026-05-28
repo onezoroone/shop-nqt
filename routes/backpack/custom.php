@@ -23,6 +23,7 @@ Route::group([
     Route::crud('contact', 'ContactCrudController');
     Route::post('contact/{id}/mark-read', 'ContactCrudController@markAsRead')->name('contact.markAsRead');
     Route::crud('setting', 'SettingCrudController');
+    Route::crud('user', 'UserCrudController');
     Route::crud('order', 'OrderCrudController');
     Route::post('order/{id}/approve', 'OrderCrudController@approve')->name('order.approve');
 }); // this should be the absolute last line of this file

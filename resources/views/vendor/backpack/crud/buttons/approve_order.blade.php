@@ -32,7 +32,7 @@
                             url: route,
                             type: 'POST',
                             data: {
-                                _token: '{{ csrf_token() }}'
+                                _token: $('meta[name="csrf-token"]').attr('content')
                             },
                             success: function(result) {
                                 if (result == 1) {
@@ -52,10 +52,10 @@
                                         location.reload();
                                     }
                                 } else {
-                                    // if the result is an array, it means 
+                                    // if the result is an array, it means
                                     // we have notification bubbles to show
                                     if (result instanceof Object) {
-                                        // trigger one or more bubble notifications 
+                                        // trigger one or more bubble notifications
                                         Object.entries(result).forEach(function(entry) {
                                             var type = entry[0];
                                             entry[1].forEach(function(message, i) {
