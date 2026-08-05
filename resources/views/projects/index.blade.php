@@ -4,17 +4,17 @@
 @section('meta_description', 'Khám phá hồ sơ năng lực về ứng dụng web, công cụ và dự án mã nguồn mở của tôi.')
 
 @section('content')
-    <section class="py-12">
+    <section class="py-12 store-view store-projects-view">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             {{-- Header --}}
             <div class="mb-10 reveal">
-                <span class="text-primary font-semibold text-sm uppercase tracking-wider">Hồ sơ năng lực</span>
-                <h1 class="section-heading text-white mt-2">Dự Án <span class="gradient-text">Của Tôi</span></h1>
-                <p class="text-gray-400 text-lg">Khám phá bộ sưu tập ứng dụng web, công cụ và dự án mã nguồn mở của tôi</p>
+                <span class="store-section-kicker">Production Case Track</span>
+                <h1 class="section-heading text-white mt-2">Dự án <span class="gradient-text">đã triển khai</span></h1>
+                <p class="text-gray-400 text-lg">Bộ sưu tập web app, công cụ và hệ thống đã được build để chạy thật.</p>
             </div>
 
             {{-- Category Filter --}}
-            <div class="flex flex-wrap gap-2 mb-10 reveal" style="transition-delay: 0.1s">
+            <div class="glass-card p-4 flex flex-wrap gap-2 mb-10 reveal" data-reveal-delay="100">
                 <a href="{{ route('projects.index') }}" class="px-4 py-2 text-sm font-medium rounded-full transition-all duration-200 {{ !$currentCategory ? 'bg-primary text-white' : 'bg-white/5 text-gray-400 hover:bg-white/10 hover:text-white' }}" id="filter-all">
                     Tất cả
                 </a>
@@ -29,7 +29,7 @@
             @if ($projects->count())
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($projects as $index => $project)
-                        <a href="{{ route('projects.show', $project) }}" class="glass-card-hover group overflow-hidden reveal" style="transition-delay: {{ ($index % 6) * 0.05 }}s" id="project-card-{{ $project->id }}">
+                        <a href="{{ route('projects.show', $project) }}" class="glass-card-hover group overflow-hidden reveal" data-reveal-delay="{{ ($index % 6) * 50 }}" id="project-card-{{ $project->id }}">
                             <div class="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 relative overflow-hidden">
                                 @if ($project->thumbnail)
                                     <img src="{{$project->thumbnail_url}}" alt="{{ $project->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
@@ -39,7 +39,12 @@
                                     </div>
                                 @endif
                                 @if ($project->is_featured)
-                                    <div class="absolute top-3 right-3 px-2 py-1 text-xs font-bold bg-warning/90 text-black rounded-full">⭐ Nổi bật</div>
+                                    <div class="store-status-chip store-status-chip--featured absolute top-3 right-3 gap-1">
+                                        <svg aria-hidden="true" class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 0 0 .95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 0 0-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.539 1.118l-2.8-2.034a1 1 0 0 0-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 0 0-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 0 0 .95-.69l1.07-3.292Z" />
+                                        </svg>
+                                        Nổi bật
+                                    </div>
                                 @endif
                             </div>
                             <div class="p-5">

@@ -3,11 +3,16 @@
 @section('title', 'Chi tiết đơn hàng #' . $order->id)
 
 @section('content')
-<section class="py-12">
+<section class="py-12 store-view store-order-detail-view">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="mb-8 reveal flex items-center justify-between">
+        <div class="mb-8 reveal flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <h1 class="section-heading text-white mb-0">Đơn hàng #{{ $order->id }}</h1>
-            <a href="{{ route('orders.index') }}" class="text-gray-400 hover:text-white transition-colors">← Trở lại danh sách</a>
+            <a href="{{ route('orders.index') }}" class="store-muted-link inline-flex items-center gap-2 transition-colors">
+                <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                </svg>
+                Trở lại danh sách
+            </a>
         </div>
 
         @if (session('success'))
@@ -64,18 +69,18 @@
             </div>
 
             <div class="space-y-6">
-                <div class="glass-card p-6 reveal" style="transition-delay: 0.1s">
+                <div class="glass-card p-6 reveal" data-reveal-delay="100">
                     <h3 class="text-lg font-bold text-white mb-4 border-b border-white/10 pb-4">Trạng thái</h3>
                     <div class="mb-2">
                         <span class="text-gray-400 text-sm">Trạng thái thanh toán:</span>
                         @if ($order->status === 'pending')
-                            <span class="ml-2 text-warning font-semibold">Chờ thanh toán</span>
+                            <span class="store-status-chip store-status-chip--warning ml-2">Chờ thanh toán</span>
                         @elseif ($order->status === 'paid')
-                            <span class="ml-2 text-info font-semibold">Đã thanh toán</span>
+                            <span class="store-status-chip store-status-chip--featured ml-2">Đã thanh toán</span>
                         @elseif ($order->status === 'completed')
-                            <span class="ml-2 text-success font-semibold">Đã hoàn thành</span>
+                            <span class="store-status-chip store-status-chip--success ml-2">Đã hoàn thành</span>
                         @else
-                            <span class="ml-2 text-danger font-semibold">Đã hủy</span>
+                            <span class="store-status-chip store-status-chip--danger ml-2">Đã hủy</span>
                         @endif
                     </div>
                     <div>
@@ -85,20 +90,21 @@
                 </div>
 
                 @if ($order->status === 'pending')
-                    <div class="glass-card p-6 reveal border-warning/30" style="transition-delay: 0.2s">
+                    <div class="glass-card p-6 reveal border-warning/30" data-reveal-delay="200">
                         <h3 class="text-lg font-bold text-warning mb-3">Hướng dẫn thanh toán</h3>
                         
                         <div class="mb-4">
                             <p class="text-sm text-gray-300 mb-2">1. Chuyển khoản USDT (TRC20)</p>
                             <p class="text-xs text-gray-400 mb-2">Chuyển chính xác <span class="text-success font-bold">${{ number_format($order->total_amount, 2) }}</span> vào ví:</p>
-                            <input type="text" value="{{ \App\Models\Setting::getValue('usdt_wallet_address', 'TRC20: ...') }}" class="form-input font-mono text-xs w-full bg-surface-dark text-gray-300 mb-2" readonly id="usdt-wallet">
-                            <button onclick="navigator.clipboard.writeText(document.getElementById('usdt-wallet').value); this.innerHTML='Đã copy!'" class="text-primary hover:text-white text-xs transition-colors">Sao chép địa chỉ ví</button>
+                            <label for="usdt-wallet" class="sr-only">Địa chỉ ví USDT</label>
+                            <input type="text" value="{{ $usdtWalletAddress }}" class="form-input font-mono text-xs w-full bg-surface-dark text-gray-300 mb-2" readonly id="usdt-wallet">
+                            <button type="button" data-copy-target="usdt-wallet" data-copy-label="Đã copy!" class="store-muted-link text-xs transition-colors">Sao chép địa chỉ ví</button>
                         </div>
 
                         <div class="border-t border-white/10 pt-4">
                             <p class="text-sm text-gray-300 mb-2">2. Xác nhận thanh toán</p>
                             <p class="text-xs text-gray-400 mb-3">Chụp lại hóa đơn và nhắn tin qua Telegram kèm mã đơn hàng <strong>#{{ $order->id }}</strong> để được duyệt.</p>
-                            <a href="{{ \App\Models\Setting::getValue('telegram_url', 'https://t.me/nqtdev') }}" target="_blank" rel="noopener" class="w-full btn-primary bg-[#0088cc] hover:bg-[#0088cc]/80 text-white justify-center py-2 text-sm">
+                            <a href="{{ $telegramUrl }}" target="_blank" rel="noopener" class="w-full btn-primary bg-[#0088cc] hover:bg-[#0088cc]/80 text-white justify-center py-2 text-sm">
                                 <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.446 1.394c-.14.18-.357.223-.548.223l.188-2.85 5.18-4.686c.223-.195-.054-.282-.346-.088l-6.406 4.03-2.76-.864c-.6-.18-.61-.593.125-.88l10.814-4.17c.502-.18.948.113.805.823z"/></svg>
                                 Nhắn tin Telegram
                             </a>

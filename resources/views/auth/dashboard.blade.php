@@ -3,11 +3,12 @@
 @section('title', 'Tài khoản của tôi')
 
 @section('content')
-<section class="py-12">
+<section class="py-12 store-view store-account-view">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="mb-10 reveal">
+            <span class="store-section-kicker">Customer Console</span>
             <h1 class="section-heading text-white">Xin chào, <span class="gradient-text">{{ auth()->user()->name }}</span></h1>
-            <p class="text-gray-400">Quản lý tài khoản và đơn hàng của bạn</p>
+            <p class="text-gray-400">Quản lý tài khoản, đơn hàng và quyền truy cập sản phẩm số.</p>
         </div>
 
         {{-- Stats --}}
@@ -23,7 +24,7 @@
                     </div>
                 </div>
             </div>
-            <div class="glass-card p-6 reveal" style="transition-delay: 0.05s">
+            <div class="glass-card p-6 reveal" data-reveal-delay="50">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-warning/20 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-warning" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
@@ -34,7 +35,7 @@
                     </div>
                 </div>
             </div>
-            <div class="glass-card p-6 reveal" style="transition-delay: 0.1s">
+            <div class="glass-card p-6 reveal" data-reveal-delay="100">
                 <div class="flex items-center gap-4">
                     <div class="w-12 h-12 rounded-xl bg-success/20 flex items-center justify-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v12m-3-2.818.879.659c1.171.879 3.07.879 4.242 0 1.172-.879 1.172-2.303 0-3.182C13.536 12.219 12.768 12 12 12c-.725 0-1.45-.22-2.003-.659-1.106-.879-1.106-2.303 0-3.182s2.9-.879 4.006 0l.415.33M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
@@ -50,7 +51,7 @@
         {{-- Account Info --}}
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {{-- Left: Profile --}}
-            <div class="glass-card p-6 reveal" style="transition-delay: 0.15s">
+            <div class="glass-card p-6 reveal" data-reveal-delay="150">
                 <h3 class="text-lg font-bold text-white mb-6 border-b border-white/10 pb-4">Thông tin tài khoản</h3>
                 <div class="space-y-4">
                     <div>
@@ -69,12 +70,17 @@
             </div>
 
             {{-- Right: Recent Orders --}}
-            <div class="lg:col-span-2 reveal" style="transition-delay: 0.2s">
+            <div class="lg:col-span-2 reveal" data-reveal-delay="200">
                 <div class="glass-card p-6">
                     <div class="flex items-center justify-between mb-6 border-b border-white/10 pb-4">
                         <h3 class="text-lg font-bold text-white">Đơn hàng gần đây</h3>
                         @if ($orders->count() > 0)
-                            <a href="{{ route('orders.index') }}" class="text-primary text-sm hover:text-white transition-colors">Xem tất cả →</a>
+                            <a href="{{ route('orders.index') }}" class="store-muted-link inline-flex items-center gap-1 text-sm transition-colors">
+                                Xem tất cả
+                                <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" />
+                                </svg>
+                            </a>
                         @endif
                     </div>
 

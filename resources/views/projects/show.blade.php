@@ -4,7 +4,7 @@
 @section('meta_description', $project->excerpt)
 
 @section('content')
-    <section class="py-12">
+    <section class="py-12 store-view store-detail-view">
         <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
             {{-- Breadcrumb --}}
             <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8 reveal">
@@ -20,7 +20,12 @@
                 <div class="flex items-center gap-3 mb-4">
                     <span class="tech-tag">{{ $project->category?->name ?? 'Không phân loại' }}</span>
                     @if ($project->is_featured)
-                        <span class="px-2 py-1 text-xs font-bold bg-warning/20 text-warning rounded-full">⭐ Nổi bật</span>
+                        <span class="store-status-chip store-status-chip--featured gap-1">
+                            <svg aria-hidden="true" class="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 0 0 .95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 0 0-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.539 1.118l-2.8-2.034a1 1 0 0 0-1.176 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 0 0-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81H7.03a1 1 0 0 0 .95-.69l1.07-3.292Z" />
+                            </svg>
+                            Nổi bật
+                        </span>
                     @endif
                     <span class="text-sm text-gray-500">{{ $project->published_at?->format('F j, Y') }}</span>
                 </div>
@@ -29,7 +34,7 @@
             </div>
 
             {{-- Action Buttons --}}
-            <div class="flex flex-wrap gap-3 mt-6 mb-10 reveal" style="transition-delay: 0.1s">
+            <div class="flex flex-wrap gap-3 mt-6 mb-10 reveal" data-reveal-delay="100">
                 @if ($project->demo_url)
                     <a href="{{ $project->demo_url }}" target="_blank" rel="noopener" class="btn-primary" id="project-demo-btn">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M13.5 6H5.25A2.25 2.25 0 0 0 3 8.25v10.5A2.25 2.25 0 0 0 5.25 21h10.5A2.25 2.25 0 0 0 18 18.75V10.5m-10.5 6L21 3m0 0h-5.25M21 3v5.25" /></svg>
@@ -45,7 +50,7 @@
             </div>
 
             {{-- Thumbnail --}}
-            <div class="reveal glass-card overflow-hidden mb-10" style="transition-delay: 0.15s">
+            <div class="reveal glass-card overflow-hidden mb-10" data-reveal-delay="150">
                 <div class="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 relative">
                     @if ($project->thumbnail)
                         <img src="{{$project->thumbnail_url}}" alt="{{ $project->title }}" class="w-full h-full object-cover">
@@ -59,7 +64,7 @@
 
             {{-- Tech Stack --}}
             @if ($project->tech_stack)
-                <div class="reveal mb-10" style="transition-delay: 0.2s">
+                <div class="reveal mb-10" data-reveal-delay="200">
                     <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Công Nghệ</h3>
                     <div class="flex flex-wrap gap-2">
                         @foreach ($project->tech_stack as $tech)
@@ -70,7 +75,7 @@
             @endif
 
             {{-- Description --}}
-            <div class="reveal glass-card p-8 mb-10" style="transition-delay: 0.25s">
+            <div class="reveal glass-card p-8 mb-10" data-reveal-delay="250">
                 <div class="prose-custom max-w-none">
                     {!! $project->description !!}
                 </div>
@@ -78,7 +83,7 @@
 
             {{-- Related Projects --}}
             @if ($relatedProjects->count())
-                <div class="reveal" style="transition-delay: 0.3s">
+                <div class="reveal" data-reveal-delay="300">
                     <h3 class="text-xl font-bold text-white mb-6">Dự Án Liên Quan</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         @foreach ($relatedProjects as $related)

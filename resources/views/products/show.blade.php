@@ -4,7 +4,7 @@
 @section('meta_description', $product->excerpt)
 
 @section('content')
-<section class="py-12">
+<section class="py-12 store-view store-product-detail-view">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8 reveal">
             <a href="{{ route('home') }}" class="hover:text-primary transition-colors">Trang chủ</a>
@@ -25,99 +25,76 @@
                     }
                     if ($hasGallery) {
                         foreach ($product->gallery as $imagePath) {
-                            $lightboxImages[] = ['url' => asset('storage/' . $imagePath), 'alt' => $product->title];
+                            $lightboxImages[] = [
+                                'url' => asset('storage/' . $imagePath),
+                                'alt' => $product->title . ' - ảnh ' . (count($lightboxImages) + 1),
+                            ];
                         }
                     }
-                    $lightboxIndex = 0;
+                    $activeGalleryImage = $lightboxImages[0] ?? null;
+                    $totalSlides = count($lightboxImages);
                 @endphp
-                <div class="glass-card p-2">
-                    {{-- Main Slider --}}
-                    <div class="swiper product-gallery-swiper rounded-lg overflow-hidden">
-                        <div class="swiper-wrapper">
-                            @if ($product->thumbnail)
-                                <div class="swiper-slide aspect-video bg-surface-dark relative">
-                                    <img src="{{$product->thumbnail_url}}" alt="{{ $product->title }}"
-                                        class="w-full h-full object-cover cursor-zoom-in gallery-lightbox-trigger"
-                                        data-lightbox-index="{{ $lightboxIndex++ }}" role="button" tabindex="0">
-                                </div>
-                            @else
-                                <div class="swiper-slide aspect-video bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center relative">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-white/5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>
-                                </div>
-                            @endif
+                <div class="product-detail-gallery glass-card" data-product-gallery>
+                    <script type="application/json" data-product-gallery-images>@json($lightboxImages)</script>
 
-                            @if ($hasGallery)
-                                @foreach ($product->gallery as $imagePath)
-                                    <div class="swiper-slide aspect-video bg-surface-dark relative">
-                                        <img src="{{ asset('storage/' . $imagePath) }}" class="w-full h-full object-cover cursor-zoom-in gallery-lightbox-trigger" loading="lazy" alt="Gallery image"
-                                            data-lightbox-index="{{ $lightboxIndex++ }}" role="button" tabindex="0">
-                                    </div>
-                                @endforeach
+                    <div class="product-gallery-main product-gallery-swiper">
+                        <div class="product-gallery-meta">
+                            <span>Product Preview</span>
+                            @if ($totalSlides > 0)
+                                <strong data-gallery-counter>1 / {{ $totalSlides }}</strong>
+                            @else
+                                <strong>No media</strong>
                             @endif
                         </div>
 
-                        <!-- Navigation -->
-                        <div class="swiper-button-prev !text-primary drop-shadow-md"></div>
-                        <div class="swiper-button-next !text-primary drop-shadow-md"></div>
+                        @if ($activeGalleryImage)
+                            <button type="button" class="product-gallery-stage gallery-lightbox-trigger swiper-slide" data-gallery-open data-lightbox-index="0" aria-label="Xem {{ $product->title }} toàn màn hình">
+                                <img src="{{ $activeGalleryImage['url'] }}" alt="{{ $activeGalleryImage['alt'] }}" class="product-gallery-image" data-gallery-image fetchpriority="high">
+                                <span class="product-gallery-zoom">
+                                    <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                        <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35m0 0A8.25 8.25 0 1 0 5.025 5.025 8.25 8.25 0 0 0 16.65 16.65ZM10.5 7.5v6m3-3h-6" />
+                                    </svg>
+                                    Phóng to
+                                </span>
+                            </button>
+                        @else
+                            <div class="product-gallery-stage product-gallery-stage--empty">
+                                <svg aria-hidden="true" class="h-20 w-20" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.7">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" />
+                                </svg>
+                                <span>Preview đang được cập nhật</span>
+                            </div>
+                        @endif
+
+                        @if ($totalSlides > 1)
+                            <button type="button" class="product-gallery-nav product-gallery-nav--prev swiper-button-prev" data-gallery-prev aria-label="Ảnh trước">
+                                <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
+                                </svg>
+                            </button>
+                            <button type="button" class="product-gallery-nav product-gallery-nav--next swiper-button-next" data-gallery-next aria-label="Ảnh sau">
+                                <svg aria-hidden="true" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
+                                </svg>
+                            </button>
+                        @endif
                     </div>
 
-                    {{-- Thumbnail Strip --}}
-                    @php
-                        $thumbLightboxIndex = 0;
-                        $totalSlides = ($product->thumbnail ? 1 : 1) + ($hasGallery ? count($product->gallery) : 0);
-                    @endphp
                     @if ($totalSlides > 1)
-                        <div class="swiper product-thumbs-swiper mt-2 rounded-lg overflow-hidden">
-                            <div class="swiper-wrapper">
-                                @if ($product->thumbnail)
-                                    <div class="swiper-slide !w-20 !h-14 rounded-md overflow-hidden cursor-pointer opacity-50 border-2 border-transparent transition-all">
-                                        <img src="{{$product->thumbnail_url}}" alt="Thumb" class="w-full h-full object-cover gallery-lightbox-trigger"
-                                            data-lightbox-index="{{ $thumbLightboxIndex++ }}" role="button" tabindex="0">
-                                    </div>
-                                @else
-                                    <div class="swiper-slide !w-20 !h-14 rounded-md overflow-hidden cursor-pointer opacity-50 border-2 border-transparent bg-gradient-to-br from-accent/20 to-primary/20 flex items-center justify-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>
-                                    </div>
-                                @endif
-
-                                @if ($hasGallery)
-                                    @foreach ($product->gallery as $imagePath)
-                                        <div class="swiper-slide !w-20 !h-14 rounded-md overflow-hidden cursor-pointer opacity-50 border-2 border-transparent transition-all">
-                                            <img src="{{ asset('storage/' . $imagePath) }}" class="w-full h-full object-cover gallery-lightbox-trigger" loading="lazy" alt="Thumb"
-                                                data-lightbox-index="{{ $thumbLightboxIndex++ }}" role="button" tabindex="0">
-                                        </div>
-                                    @endforeach
-                                @endif
-                            </div>
+                        <div class="product-gallery-thumbs product-thumbs-swiper" role="listbox" aria-label="Chọn ảnh xem trước">
+                            @foreach ($lightboxImages as $image)
+                                <button type="button" class="product-gallery-thumb swiper-slide {{ $loop->first ? 'is-active swiper-slide-thumb-active' : '' }}" data-gallery-thumb data-gallery-index="{{ $loop->index }}" role="option" aria-selected="{{ $loop->first ? 'true' : 'false' }}" aria-label="Xem ảnh {{ $loop->iteration }} của {{ $product->title }}">
+                                    <img src="{{ $image['url'] }}" alt="{{ $image['alt'] }}" loading="{{ $loop->first ? 'eager' : 'lazy' }}">
+                                </button>
+                            @endforeach
                         </div>
                     @endif
                 </div>
 
-                @if (count($lightboxImages) > 0)
-                    <div id="product-lightbox" class="fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-8" role="dialog" aria-modal="true" aria-label="Xem ảnh toàn màn hình">
-                        <button type="button" class="absolute inset-0 bg-black/95 cursor-zoom-out" data-lightbox-close aria-label="Đóng"></button>
-
-                        <button type="button" class="absolute top-4 right-4 z-10 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors flex items-center justify-center" data-lightbox-close aria-label="Đóng">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
-                        </button>
-
-                        @if (count($lightboxImages) > 1)
-                            <button type="button" class="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors flex items-center justify-center" data-lightbox-prev aria-label="Ảnh trước">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
-                            </button>
-                            <button type="button" class="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors flex items-center justify-center" data-lightbox-next aria-label="Ảnh sau">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
-                            </button>
-                            <span id="product-lightbox-counter" class="absolute bottom-4 left-1/2 -translate-x-1/2 z-10 text-sm text-white/70 tabular-nums"></span>
-                        @endif
-
-                        <img id="product-lightbox-img" src="" alt="" class="relative z-[1] max-w-full max-h-[90vh] object-contain select-none pointer-events-none">
-                    </div>
-                @endif
             </div>
 
             {{-- Right: Info --}}
-            <div class="lg:col-span-2 reveal" style="transition-delay: 0.15s">
+            <div class="lg:col-span-2 reveal" data-reveal-delay="150">
                 <div class="glass-card p-6 sticky top-24">
                     <div class="flex flex-wrap gap-2 mb-3">
                         @foreach ($product->categories as $cat)
@@ -133,13 +110,16 @@
                             <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Chọn phiên bản</h4>
                             <div class="space-y-2">
                                 @foreach ($product->variants as $variant)
+                                    @php
+                                        $variantIsOnSale = $variant->isOnSale() && $variant->discount_percent > 0;
+                                    @endphp
                                     <label class="variant-option group cursor-pointer block" data-variant-id="{{ $variant->id }}">
                                         <input type="radio" name="variant" value="{{ $variant->id }}"
                                             class="sr-only"
                                             data-price="{{ $variant->price }}"
                                             data-sale-price="{{ $variant->sale_price ?? '' }}"
-                                            data-is-on-sale="{{ $variant->isOnSale() ? '1' : '0' }}"
-                                            data-discount="{{ $variant->discount_percent }}"
+                                            data-is-on-sale="{{ $variantIsOnSale ? '1' : '0' }}"
+                                            data-discount="{{ $variantIsOnSale ? $variant->discount_percent : '' }}"
                                             data-name="{{ $variant->name }}"
                                             data-demo-url="{{ $variant->demo_url ?? '' }}"
                                             {{ $variant->is_default ? 'checked' : '' }}>
@@ -159,7 +139,7 @@
                                                 </div>
                                             </div>
                                             <div class="text-right">
-                                                @if ($variant->isOnSale())
+                                                @if ($variantIsOnSale)
                                                     <span class="text-sm font-bold text-success">${{ $variant->sale_price }}</span>
                                                     <span class="text-xs text-gray-500 line-through ml-1">${{ $variant->price }}</span>
                                                 @else
@@ -174,21 +154,27 @@
 
                         {{-- Dynamic Price Display --}}
                         <div id="variant-price" class="flex items-center gap-3 mb-6">
-                            @php $defaultVariant = $product->getDefaultVariant(); @endphp
-                            @if ($defaultVariant->isOnSale())
+                            @php
+                                $defaultVariant = $product->getDefaultVariant();
+                                $defaultVariantIsOnSale = $defaultVariant?->isOnSale() && $defaultVariant->discount_percent > 0;
+                            @endphp
+                            @if ($defaultVariantIsOnSale)
                                 <span class="text-3xl font-black text-success" id="display-price">${{ $defaultVariant->sale_price }}</span>
                                 <span class="text-xl text-gray-500 line-through" id="display-original-price">${{ $defaultVariant->price }}</span>
                                 <span class="sale-badge" id="display-discount">-{{ $defaultVariant->discount_percent }}%</span>
                             @else
-                                <span class="text-3xl font-black text-success" id="display-price">${{ $defaultVariant->price }}</span>
+                                <span class="text-3xl font-black text-success" id="display-price">${{ $defaultVariant?->price ?? $product->price }}</span>
                                 <span class="text-xl text-gray-500 line-through hidden" id="display-original-price"></span>
-                                <span class="sale-badge hidden" id="display-discount" style="display:none"></span>
+                                <span class="sale-badge hidden" id="display-discount"></span>
                             @endif
                         </div>
                     @else
                         {{-- Standard Price (no variants) --}}
                         <div class="flex items-center gap-3 mb-6">
-                            @if ($product->isOnSale())
+                            @php
+                                $productIsOnSale = $product->isOnSale() && $product->discount_percent > 0;
+                            @endphp
+                            @if ($productIsOnSale)
                                 <span class="text-3xl font-black text-success">${{ $product->sale_price }}</span>
                                 <span class="text-xl text-gray-500 line-through">${{ $product->price }}</span>
                                 <span class="sale-badge">-{{ $product->discount_percent }}%</span>
@@ -199,9 +185,19 @@
                     @endif
 
                     {{-- Stats --}}
-                    <div class="flex items-center gap-6 mb-6 text-sm text-gray-400">
-                        <span>📥 {{ $product->download_count }} lượt tải</span>
-                        <span>📅 {{ $product->published_at?->format('m/Y') }}</span>
+                    <div class="flex flex-wrap items-center gap-5 mb-6 text-sm text-gray-400">
+                        <span class="inline-flex items-center gap-1.5">
+                            <svg aria-hidden="true" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                            </svg>
+                            {{ $product->download_count }} lượt tải
+                        </span>
+                        <span class="inline-flex items-center gap-1.5">
+                            <svg aria-hidden="true" class="h-4 w-4 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3.75 8.25h16.5M5.25 5.25h13.5A1.5 1.5 0 0 1 20.25 6.75v12A1.5 1.5 0 0 1 18.75 20.25H5.25A1.5 1.5 0 0 1 3.75 18.75v-12A1.5 1.5 0 0 1 5.25 5.25Z" />
+                            </svg>
+                            {{ $product->published_at?->format('m/Y') }}
+                        </span>
                     </div>
 
                     {{-- Add to Cart --}}
@@ -263,27 +259,52 @@
             </div>
         </div>
 
+        @if (count($lightboxImages) > 0)
+            <div id="product-lightbox" class="product-lightbox fixed inset-0 z-[200] hidden items-center justify-center p-4 sm:p-8" role="dialog" aria-modal="true" aria-hidden="true" aria-label="Xem ảnh toàn màn hình">
+                <button type="button" class="product-lightbox__backdrop absolute inset-0 cursor-zoom-out" data-lightbox-close aria-label="Đóng"></button>
+
+                <button type="button" class="product-lightbox__close absolute top-4 right-4 z-10 flex items-center justify-center" data-lightbox-close aria-label="Đóng">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
+                </button>
+
+                @if (count($lightboxImages) > 1)
+                    <button type="button" class="product-lightbox__nav product-lightbox__nav--prev absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center" data-lightbox-prev aria-label="Ảnh trước">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" /></svg>
+                    </button>
+                    <button type="button" class="product-lightbox__nav product-lightbox__nav--next absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center" data-lightbox-next aria-label="Ảnh sau">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" /></svg>
+                    </button>
+                    <span id="product-lightbox-counter" class="product-lightbox__counter absolute bottom-4 left-1/2 -translate-x-1/2 z-10 tabular-nums"></span>
+                @endif
+
+                <figure class="product-lightbox__figure relative z-[1]">
+                    <img id="product-lightbox-img" src="" alt="" class="product-lightbox__image max-w-full object-contain select-none pointer-events-none">
+                    <figcaption id="product-lightbox-caption" class="sr-only"></figcaption>
+                </figure>
+            </div>
+        @endif
+
         {{-- Content Tabs --}}
         <div class="mt-10 reveal" id="product-tabs">
             <div class="glass-card overflow-hidden">
-                <div class="flex border-b border-white/10">
-                    <button class="tab-btn active px-6 py-4 text-sm font-bold text-white border-b-2 border-primary hover:bg-white/5 transition-colors" data-target="tab-description">
+                <div class="flex border-b border-white/10" role="tablist" aria-label="Thông tin sản phẩm">
+                    <button type="button" class="tab-btn active px-6 py-4 text-sm font-bold text-white border-b-2 border-primary hover:bg-white/5 transition-colors" data-target="tab-description" role="tab" aria-selected="true" aria-controls="tab-description">
                         Chi Tiết Sản Phẩm
                     </button>
                     @if ($product->changelog)
-                    <button class="tab-btn px-6 py-4 text-sm font-bold text-gray-400 border-b-2 border-transparent hover:text-white hover:bg-white/5 transition-colors" data-target="tab-changelog">
+                    <button type="button" class="tab-btn px-6 py-4 text-sm font-bold text-gray-400 border-b-2 border-transparent hover:text-white hover:bg-white/5 transition-colors" data-target="tab-changelog" role="tab" aria-selected="false" aria-controls="tab-changelog">
                         Lịch Sử Cập Nhật (Changelog)
                     </button>
                     @endif
                 </div>
 
                 <div class="p-8">
-                    <div id="tab-description" class="tab-content prose-custom max-w-none">
+                    <div id="tab-description" class="tab-content prose-custom max-w-none" role="tabpanel">
                         {!! html_entity_decode($product->description) !!}
                     </div>
 
                     @if ($product->changelog)
-                    <div id="tab-changelog" class="tab-content prose-custom max-w-none hidden">
+                    <div id="tab-changelog" class="tab-content prose-custom max-w-none hidden" role="tabpanel">
                         {!! $product->changelog !!}
                     </div>
                     @endif
@@ -297,7 +318,7 @@
                 <h3 class="text-xl font-bold text-white mb-6">Sản Phẩm Liên Quan</h3>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($relatedProducts as $i => $related)
-                        @include('products._card', ['product' => $related, 'index' => $i])
+                        <x-product.card :product="$related" :index="$i" />
                     @endforeach
                 </div>
             </div>
@@ -305,233 +326,4 @@
     </div>
 </section>
 
-<!-- Swiper JS & CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
-<style>
-    .product-thumbs-swiper .swiper-slide-thumb-active {
-        opacity: 1 !important;
-        border-color: var(--primary, #6366f1) !important;
-    }
-    #product-lightbox:not(.hidden) {
-        display: flex;
-    }
-</style>
-<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        // Thumbs swiper (small strip)
-        const thumbsEl = document.querySelector('.product-thumbs-swiper');
-        let thumbsSwiper = null;
-        if (thumbsEl) {
-            thumbsSwiper = new Swiper('.product-thumbs-swiper', {
-                spaceBetween: 8,
-                slidesPerView: 'auto',
-                freeMode: true,
-                watchSlidesProgress: true,
-            });
-        }
-
-        // Main gallery swiper
-        const mainSwiper = new Swiper('.product-gallery-swiper', {
-            grabCursor: true,
-            spaceBetween: 0,
-            navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-            thumbs: thumbsSwiper ? { swiper: thumbsSwiper } : undefined,
-        });
-
-        // Fullscreen lightbox
-        const lightboxEl = document.getElementById('product-lightbox');
-        const lightboxImages = @json($lightboxImages);
-        if (lightboxEl && lightboxImages.length > 0) {
-            const lightboxImg = document.getElementById('product-lightbox-img');
-            const lightboxCounter = document.getElementById('product-lightbox-counter');
-            let lightboxCurrentIndex = 0;
-
-            const renderLightbox = () => {
-                const image = lightboxImages[lightboxCurrentIndex];
-                lightboxImg.src = image.url;
-                lightboxImg.alt = image.alt;
-                if (lightboxCounter) {
-                    lightboxCounter.textContent = (lightboxCurrentIndex + 1) + ' / ' + lightboxImages.length;
-                }
-            };
-
-            const openLightbox = (index) => {
-                if (index < 0 || index >= lightboxImages.length) {
-                    return;
-                }
-                lightboxCurrentIndex = index;
-                renderLightbox();
-                lightboxEl.classList.remove('hidden');
-                document.body.classList.add('overflow-hidden');
-            };
-
-            const closeLightbox = () => {
-                lightboxEl.classList.add('hidden');
-                document.body.classList.remove('overflow-hidden');
-                lightboxImg.removeAttribute('src');
-            };
-
-            const showPrev = () => {
-                lightboxCurrentIndex = (lightboxCurrentIndex - 1 + lightboxImages.length) % lightboxImages.length;
-                renderLightbox();
-            };
-
-            const showNext = () => {
-                lightboxCurrentIndex = (lightboxCurrentIndex + 1) % lightboxImages.length;
-                renderLightbox();
-            };
-
-            document.querySelectorAll('.gallery-lightbox-trigger').forEach((trigger) => {
-                const open = () => openLightbox(parseInt(trigger.dataset.lightboxIndex, 10));
-                trigger.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    open();
-                });
-                trigger.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        open();
-                    }
-                });
-            });
-
-            lightboxEl.querySelectorAll('[data-lightbox-close]').forEach((btn) => {
-                btn.addEventListener('click', closeLightbox);
-            });
-            lightboxEl.querySelector('[data-lightbox-prev]')?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showPrev();
-            });
-            lightboxEl.querySelector('[data-lightbox-next]')?.addEventListener('click', (e) => {
-                e.stopPropagation();
-                showNext();
-            });
-
-            document.addEventListener('keydown', (e) => {
-                if (lightboxEl.classList.contains('hidden')) {
-                    return;
-                }
-                if (e.key === 'Escape') {
-                    closeLightbox();
-                } else if (e.key === 'ArrowLeft' && lightboxImages.length > 1) {
-                    showPrev();
-                } else if (e.key === 'ArrowRight' && lightboxImages.length > 1) {
-                    showNext();
-                }
-            });
-        }
-
-        // Tabs Logic
-        const tabBtns = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-
-        tabBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                const target = btn.getAttribute('data-target');
-
-                // Reset buttons
-                tabBtns.forEach(b => {
-                    b.classList.remove('active', 'text-white', 'border-primary');
-                    b.classList.add('text-gray-400', 'border-transparent');
-                });
-
-                // Set active button
-                btn.classList.add('active', 'text-white', 'border-primary');
-                btn.classList.remove('text-gray-400', 'border-transparent');
-
-                // Hide all contents
-                tabContents.forEach(content => {
-                    content.classList.add('hidden');
-                });
-
-                // Show target content
-                document.getElementById(target).classList.remove('hidden');
-            });
-        });
-
-        // ===== Variant Selector Logic =====
-        const variantOptions = document.querySelectorAll('.variant-option');
-        if (variantOptions.length > 0) {
-            const displayPrice = document.getElementById('display-price');
-            const displayOriginal = document.getElementById('display-original-price');
-            const displayDiscount = document.getElementById('display-discount');
-            const hiddenInput = document.getElementById('selected-variant-id');
-            const demoBtn = document.getElementById('product-demo-btn');
-            const demoBtnText = document.getElementById('demo-btn-text');
-
-            variantOptions.forEach(option => {
-                option.addEventListener('click', () => {
-                    const radio = option.querySelector('input[type="radio"]');
-                    radio.checked = true;
-
-                    // Update hidden input
-                    hiddenInput.value = radio.value;
-
-                    // Update visual state
-                    variantOptions.forEach(opt => {
-                        const container = opt.querySelector('div');
-                        const dot = opt.querySelector('.w-5');
-                        const innerDot = opt.querySelector('.w-2\\.5');
-
-                        container.classList.remove('border-primary', 'bg-primary/10');
-                        container.classList.add('border-white/10', 'bg-white/5');
-                        dot.classList.remove('border-primary');
-                        dot.classList.add('border-gray-500');
-                        innerDot.classList.remove('bg-primary');
-                        innerDot.classList.add('bg-transparent');
-                    });
-
-                    const activeContainer = option.querySelector('div');
-                    const activeDot = option.querySelector('.w-5');
-                    const activeInnerDot = option.querySelector('.w-2\\.5');
-
-                    activeContainer.classList.add('border-primary', 'bg-primary/10');
-                    activeContainer.classList.remove('border-white/10', 'bg-white/5');
-                    activeDot.classList.add('border-primary');
-                    activeDot.classList.remove('border-gray-500');
-                    activeInnerDot.classList.add('bg-primary');
-                    activeInnerDot.classList.remove('bg-transparent');
-
-                    // Update price display
-                    const isOnSale = radio.dataset.isOnSale === '1';
-                    const price = radio.dataset.price;
-                    const salePrice = radio.dataset.salePrice;
-                    const discount = radio.dataset.discount;
-
-                    if (isOnSale) {
-                        displayPrice.textContent = '$' + parseFloat(salePrice).toFixed(2);
-                        displayOriginal.textContent = '$' + parseFloat(price).toFixed(2);
-                        displayOriginal.classList.remove('hidden');
-                        displayDiscount.textContent = '-' + discount + '%';
-                        displayDiscount.classList.remove('hidden');
-                        displayDiscount.style.display = '';
-                    } else {
-                        displayPrice.textContent = '$' + parseFloat(price).toFixed(2);
-                        displayOriginal.classList.add('hidden');
-                        displayDiscount.classList.add('hidden');
-                        displayDiscount.style.display = 'none';
-                    }
-
-                    // Update demo button URL
-                    if (demoBtn) {
-                        const demoUrl = radio.dataset.demoUrl;
-                        if (demoUrl) {
-                            demoBtn.href = demoUrl;
-                            demoBtn.classList.remove('hidden');
-                            if (demoBtnText) {
-                                demoBtnText.textContent = 'Xem Trước (' + radio.dataset.name + ')';
-                            }
-                        } else {
-                            demoBtn.classList.add('hidden');
-                        }
-                    }
-                });
-            });
-        }
-    });
-</script>
 @endsection

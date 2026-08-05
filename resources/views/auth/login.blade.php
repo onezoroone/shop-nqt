@@ -3,24 +3,21 @@
 @section('title', 'Đăng nhập')
 
 @section('content')
-<section class="py-12 flex items-center justify-center min-h-[80vh] relative overflow-hidden">
-    {{-- Decorative Background Elements --}}
-    <div class="absolute top-1/4 left-1/4 w-96 h-96 bg-primary/20 rounded-full blur-[100px] pointer-events-none"></div>
-    <div class="absolute bottom-1/4 right-1/4 w-96 h-96 bg-accent/20 rounded-full blur-[100px] pointer-events-none"></div>
-
+<section class="py-12 store-view store-auth-view flex items-center justify-center min-h-[80vh] relative overflow-hidden">
     <div class="max-w-md w-full px-4 sm:px-6 relative z-10">
         <div class="text-center mb-10 reveal">
-            <h1 class="section-heading text-white">Đăng <span class="gradient-text">Nhập</span></h1>
-            <p class="text-gray-400">Chào mừng bạn quay lại hệ thống.</p>
+            <span class="store-section-kicker">Account Access</span>
+            <h1 class="section-heading text-white">Đăng <span class="gradient-text">nhập</span></h1>
+            <p class="text-gray-400">Truy cập dashboard, đơn hàng và source code đã mua.</p>
         </div>
 
-        <div class="glass-card p-8 sm:p-10 reveal border border-white/10 shadow-2xl relative overflow-hidden" style="transition-delay: 0.1s">
+        <div class="glass-card p-8 sm:p-10 reveal border border-white/10 shadow-2xl relative overflow-hidden" data-reveal-delay="100">
             <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-primary to-accent"></div>
             <form action="{{ route('login.post') }}" method="POST">
                 @csrf
                 <div class="mb-6">
                     <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
-                    <input type="email" id="email" name="email" value="{{ old('email') }}" required class="form-input" placeholder="email@cuaban.com">
+                    <input type="email" id="email" name="email" value="{{ old('email') }}" required class="form-input" placeholder="email@cuaban.com" autocomplete="email">
                     @error('email')
                         <p class="text-danger text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -28,7 +25,7 @@
 
                 <div class="mb-6">
                     <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Mật khẩu</label>
-                    <input type="password" id="password" name="password" required class="form-input" placeholder="••••••••">
+                    <input type="password" id="password" name="password" required class="form-input" placeholder="••••••••" autocomplete="current-password">
                     @error('password')
                         <p class="text-danger text-xs mt-1">{{ $message }}</p>
                     @enderror

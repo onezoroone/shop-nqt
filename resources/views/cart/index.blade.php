@@ -3,7 +3,7 @@
 @section('title', 'Cart')
 
 @section('content')
-<section class="py-12">
+<section class="py-12 store-view store-cart-view">
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="mb-8 reveal">
             <h1 class="section-heading text-white">Giỏ hàng</h1>
@@ -19,7 +19,7 @@
             <div id="cart-content">
                 <div class="space-y-4 mb-8">
                 @foreach ($cartItems as $index => $item)
-                    <div class="glass-card p-4 flex items-center gap-4 reveal" style="transition-delay: {{ $index * 0.05 }}s" id="cart-item-{{ $item['cart_key'] }}">
+                    <div class="glass-card p-4 flex flex-col sm:flex-row sm:items-center gap-4 reveal" data-reveal-delay="{{ $index * 50 }}" id="cart-item-{{ $item['cart_key'] }}">
                         {{-- Thumbnail --}}
                         <div class="w-20 h-14 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 overflow-hidden flex-shrink-0">
                             @if ($item['product']->thumbnail)
@@ -33,7 +33,7 @@
                                 {{ $item['product']->title }}
                             </a>
                             @if ($item['variant'])
-                                <div class="text-xs text-accent mt-0.5">📦 {{ $item['variant']->name }}</div>
+                                <div class="text-xs text-accent mt-0.5">Phiên bản: {{ $item['variant']->name }}</div>
                             @endif
                             <div class="flex items-center gap-2 mt-1">
                                 @if ($item['variant'])
@@ -59,7 +59,8 @@
                             @csrf
                             @method('PATCH')
                             <input type="hidden" name="cart_key" value="{{ $item['cart_key'] }}">
-                            <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="99" class="form-input w-16 text-center py-1.5 text-sm" onchange="this.form.submit()">
+                            <label for="cart-quantity-{{ $loop->index }}" class="sr-only">Số lượng {{ $item['product']->title }}</label>
+                            <input id="cart-quantity-{{ $loop->index }}" type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="99" class="form-input w-16 text-center py-1.5 text-sm" onchange="this.form.submit()">
                         </form>
 
                         {{-- Subtotal --}}
@@ -72,7 +73,7 @@
                             @csrf
                             @method('DELETE')
                             <input type="hidden" name="cart_key" value="{{ $item['cart_key'] }}">
-                            <button type="submit" class="p-2 text-gray-500 hover:text-danger transition-colors" title="Remove">
+                            <button type="submit" class="p-2 text-gray-500 hover:text-danger transition-colors" title="Xóa khỏi giỏ hàng" aria-label="Xóa {{ $item['product']->title }} khỏi giỏ hàng">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
                             </button>
                         </form>
@@ -95,7 +96,12 @@
                     </button>
                 </form>
 
-                <a href="{{ route('products.index') }}" class="block text-center text-sm text-gray-400 hover:text-primary transition-colors mt-4">← Tiếp tục Mua sắm</a>
+                <a href="{{ route('products.index') }}" class="store-muted-link inline-flex w-full items-center justify-center gap-2 text-sm transition-colors mt-4">
+                    <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
+                    </svg>
+                    Tiếp tục mua sắm
+                </a>
             </div>
         @else
             <div class="glass-card p-16 text-center reveal">

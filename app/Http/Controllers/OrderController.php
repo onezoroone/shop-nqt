@@ -5,13 +5,16 @@ namespace App\Http\Controllers;
 use App\Models\Order;
 use App\Models\Product;
 use App\Models\ProductVariant;
+use App\Models\Setting;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\View\View;
 
 class OrderController extends Controller
 {
-    public function store(Request $request)
+    public function store(Request $request): RedirectResponse
     {
         $cart = session()->get('cart', []);
 
@@ -92,17 +95,21 @@ class OrderController extends Controller
         return redirect()->route('orders.show', $order)->with('success', 'Đơn hàng đã được tạo thành công! Vui lòng thanh toán.');
     }
 
-    public function show(Order $order)
+    public function show(Order $order): View
     {
         // Must belong to auth user
         if ($order->user_id !== Auth::id()) {
             abort(403);
         }
 
-        return view('orders.show', compact('order'));
+        return view('orders.show', [
+            'order' => $order,
+            'telegramUrl' => Setting::getValue('telegram_url', 'https://t.me/nqtdev'),
+            'usdtWalletAddress' => Setting::getValue('usdt_wallet_address', 'TRC20: ...'),
+        ]);
     }
 
-    public function index()
+    public function index(): View
     {
         $orders = Order::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
 
