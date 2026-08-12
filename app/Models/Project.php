@@ -21,6 +21,7 @@ class Project extends Model
         'description',
         'thumbnail',
         'tech_stack',
+        'tech_stack_csv',
         'demo_url',
         'source_url',
         'is_featured',
@@ -50,31 +51,36 @@ class Project extends Model
         ];
     }
 
-    public function getTechStackCsvAttribute()
+    public function getTechStackCsvAttribute(): string
     {
         return implode(', ', $this->tech_stack ?? []);
     }
 
     public function getThumbnailUrlAttribute(): string
     {
-        if (!$this->thumbnail) {
+        if (! $this->thumbnail) {
             return asset('assets/images/placeholder.jpg'); // Hoặc ảnh mặc định
         }
-        
+
         if (str_starts_with($this->thumbnail, 'http')) {
             return $this->thumbnail;
         }
-        
+
         if (str_starts_with($this->thumbnail, '/')) {
             return url($this->thumbnail);
         }
 
-        return asset('storage/' . $this->thumbnail);
+        return asset('storage/'.$this->thumbnail);
     }
 
-    public function setTechStackCsvAttribute($value)
+    public function setTechStackCsvAttribute(?string $value): void
     {
-        $this->attributes['tech_stack'] = json_encode(array_filter(array_map('trim', explode(',', $value))));
+        $technologies = array_values(array_unique(array_filter(
+            array_map('trim', explode(',', $value ?? '')),
+            fn (string $technology): bool => $technology !== ''
+        )));
+
+        $this->setAttribute('tech_stack', $technologies);
     }
 
     /**

@@ -4,11 +4,12 @@
 @section('meta_description', 'Portfolio and digital product shop by NQT Dev — Full-Stack Developer specializing in Laravel, WordPress, and modern web technologies.')
 
 @section('content')
-    <div class="home-page" data-home-scene>
+    <div class="home-page home-release-desk" data-home-scene>
         <x-home.hero
             :settings="$settings"
             :featured-projects="$featuredProjects"
             :featured-products="$featuredProducts"
+            :home-metrics="$homeMetrics"
         />
 
         <x-home.featured-products :featured-products="$featuredProducts" />

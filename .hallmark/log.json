@@ -1,0 +1,89 @@
+[
+  {
+    "date": "2026-08-12",
+    "scope": "home",
+    "macrostructure": "Release Desk + Production Log",
+    "theme": "Circuit Atelier",
+    "theme_axes": "dark / grotesk-sans + mono / green-cyan",
+    "enrichment": "Live product release visual",
+    "nav": "N13 Inline search pill",
+    "footer": "Ft5 Statement",
+    "brief": "A commerce-first home page with a product-backed hero, release inventory, production log, capability matrix, and launch strip"
+  },
+  {
+    "date": "2026-08-12",
+    "scope": "projects",
+    "macrostructure": "Case Archive + Production Index",
+    "theme": "Circuit Atelier",
+    "theme_axes": "dark / grotesk-sans + mono / green-cyan",
+    "enrichment": "Numbered production case files",
+    "nav": "N13 Inline search pill",
+    "footer": "Ft5 Statement",
+    "brief": "An editorial project archive with a lead case and alternating production records"
+  },
+  {
+    "date": "2026-08-12",
+    "scope": "shop",
+    "macrostructure": "Catalogue Registry + Product Deck",
+    "theme": "Circuit Atelier",
+    "theme_axes": "dark / grotesk-sans + mono / green-cyan",
+    "enrichment": "Indexed category rail",
+    "nav": "N13 Inline search pill",
+    "footer": "Ft5 Statement",
+    "brief": "A dense product catalogue with indexed filters, focused controls, and inspection-first product cards"
+  },
+  {
+    "date": "2026-08-12",
+    "scope": "contact",
+    "macrostructure": "Brief Intake + Channel Ledger",
+    "theme": "Circuit Atelier",
+    "theme_axes": "dark / grotesk-sans + mono / green-cyan",
+    "enrichment": "Direct contact channel ledger",
+    "nav": "N13 Inline search pill",
+    "footer": "Ft5 Statement",
+    "brief": "Operational contact workflow with a clear intake form and direct channels"
+  },
+  {
+    "date": "2026-08-12",
+    "scope": "login",
+    "macrostructure": "Access Ledger + Secure Form",
+    "theme": "Circuit Atelier",
+    "theme_axes": "dark / grotesk-sans + mono / green-cyan",
+    "enrichment": "Account access ledger",
+    "nav": "N13 Inline search pill",
+    "footer": "Ft5 Statement",
+    "brief": "Focused login workflow aligned with the technical commerce storefront"
+  },
+  {
+    "date": "2026-08-12",
+    "scope": "app-motion",
+    "macrostructure": "Map / Diagram + Catalogue",
+    "theme": "Circuit Atelier",
+    "theme_axes": "dark / grotesk-sans + mono / green-cyan",
+    "enrichment": "Signal assembly with visible circuit cursor and scroll progress",
+    "nav": "N13 Inline search pill",
+    "footer": "Ft5 Statement",
+    "brief": "Motion polish with a composed hero entrance, visible circuit cursor, pointer-reactive depth, scroll-linked signal, tactile states, and reduced-motion parity"
+  },
+  {
+    "date": "2026-08-11",
+    "scope": "app",
+    "macrostructure": "Map / Diagram + Catalogue",
+    "theme": "Circuit Atelier",
+    "theme_axes": "dark / grotesk-sans + mono / green-cyan",
+    "enrichment": "Tier-A CSS circuit map",
+    "nav": "N13 Inline search pill",
+    "footer": "Ft5 Statement",
+    "brief": "Redesign NQT Dev code and electronics storefront with Hallmark anti-slop principles"
+  },
+  {
+    "date": "2026-08-11",
+    "scope": "app",
+    "macrostructure": "Ecosystem Index + Workbench",
+    "theme": "technical commerce",
+    "enrichment": "CSS product lab",
+    "nav": "N9 Edge aligned",
+    "footer": "Ft2 Inline rule",
+    "brief": "Initial frontend polish for NQT Dev storefront"
+  }
+]

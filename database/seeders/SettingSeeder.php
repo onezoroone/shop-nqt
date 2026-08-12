@@ -32,6 +32,9 @@ class SettingSeeder extends Seeder
             'seo_projects_title' => 'Dự án nổi bật - NQT Dev',
             'seo_projects_description' => 'Các dự án tiêu biểu mà tôi đã thực hiện.',
             'seo_projects_keywords' => 'portfolio, projects, web development',
+            'seo_contact_title' => 'Liên hệ triển khai website và source code - NQT Dev',
+            'seo_contact_description' => 'Gửi brief cho NQT Dev để tư vấn triển khai website, cửa hàng điện tử, source code Laravel, WordPress và hệ thống web theo yêu cầu.',
+            'seo_contact_keywords' => 'liên hệ lập trình viên, thiết kế website, source code Laravel, WordPress, cửa hàng điện tử',
             'seo_default_image' => asset('logo.png'),
         ];
 

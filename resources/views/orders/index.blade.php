@@ -7,7 +7,7 @@
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="mb-8 reveal">
             <span class="store-section-kicker">Order Archive</span>
-            <h1 class="section-heading text-white">Đơn hàng <span class="gradient-text">của tôi</span></h1>
+            <h1 class="section-heading text-white">Đơn hàng <span class="store-title-mark">của tôi</span></h1>
         </div>
 
         @if ($orders->isEmpty())

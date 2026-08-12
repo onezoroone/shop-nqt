@@ -102,6 +102,12 @@ class OrderController extends Controller
             abort(403);
         }
 
+        $this->configureNoIndexSeo(
+            title: "Chi tiết đơn hàng #{$order->id} - NQT Dev",
+            description: 'Kiểm tra sản phẩm, trạng thái và thông tin thanh toán của đơn hàng tại NQT Dev.',
+            canonicalUrl: route('orders.show', $order)
+        );
+
         return view('orders.show', [
             'order' => $order,
             'telegramUrl' => Setting::getValue('telegram_url', 'https://t.me/nqtdev'),
@@ -111,6 +117,12 @@ class OrderController extends Controller
 
     public function index(): View
     {
+        $this->configureNoIndexSeo(
+            title: 'Đơn hàng của tôi - NQT Dev',
+            description: 'Theo dõi danh sách, trạng thái và lịch sử đơn hàng trong tài khoản NQT Dev.',
+            canonicalUrl: route('orders.index')
+        );
+
         $orders = Order::where('user_id', Auth::id())->orderBy('created_at', 'desc')->get();
 
         return view('orders.index', compact('orders'));

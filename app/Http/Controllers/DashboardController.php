@@ -10,6 +10,12 @@ class DashboardController extends Controller
 {
     public function __invoke(): View
     {
+        $this->configureNoIndexSeo(
+            title: 'Tài khoản của tôi - NQT Dev',
+            description: 'Quản lý thông tin tài khoản, đơn hàng và quyền truy cập sản phẩm số tại NQT Dev.',
+            canonicalUrl: route('dashboard')
+        );
+
         $user = Auth::user();
 
         $orders = Order::where('user_id', $user->id)

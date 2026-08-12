@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class ProjectRequest extends FormRequest
@@ -19,7 +20,7 @@ class ProjectRequest extends FormRequest
     {
         if (empty($this->slug) && $this->title) {
             $this->merge([
-                'slug' => \Illuminate\Support\Str::slug($this->title)
+                'slug' => Str::slug($this->title),
             ]);
         }
     }
@@ -38,7 +39,7 @@ class ProjectRequest extends FormRequest
             'excerpt' => ['required', 'string'],
             'description' => ['required', 'string'],
             'thumbnail' => ['nullable', 'string'],
-            'tech_stack' => ['nullable', 'array'],
+            'tech_stack_csv' => ['nullable', 'string'],
             'demo_url' => ['nullable', 'url', 'max:255'],
             'source_url' => ['nullable', 'url', 'max:255'],
             'is_featured' => ['boolean'],

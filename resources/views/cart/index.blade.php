@@ -1,114 +1,213 @@
 @extends('layouts.app')
 
-@section('title', 'Cart')
+@section('title', 'Giỏ hàng')
 
 @section('content')
-<section class="py-12 store-view store-cart-view">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="mb-8 reveal">
-            <h1 class="section-heading text-white">Giỏ hàng</h1>
-        </div>
+@php
+    $cartItemCount = array_sum(array_column($cartItems, 'quantity'));
+@endphp
 
-        @if (session('success'))
-            <div class="glass-card p-4 mb-6 border-success/30 text-success text-sm reveal">
-                {{ session('success') }}
+<section class="store-view store-cart-view cart-workbench">
+    <div class="cart-shell">
+        <header class="cart-masthead reveal">
+            <div class="cart-masthead__copy">
+                <p class="cart-kicker">Checkout workspace</p>
+                <h1 class="section-heading">Giỏ hàng<span aria-hidden="true">.</span></h1>
+                <p class="cart-intro">
+                    Kiểm tra sản phẩm, phiên bản và số lượng trước khi tạo đơn hàng.
+                </p>
+            </div>
+
+            <ol class="cart-progress" aria-label="Tiến trình đặt hàng">
+                <li class="is-current" aria-current="step">
+                    <span>01</span>
+                    <strong>Giỏ hàng</strong>
+                </li>
+                <li>
+                    <span>02</span>
+                    <strong>Xác nhận</strong>
+                </li>
+                <li>
+                    <span>03</span>
+                    <strong>Hoàn tất</strong>
+                </li>
+            </ol>
+        </header>
+
+        @if ($errors->any())
+            <div class="cart-notice cart-notice--error reveal" role="alert">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9.303 3.376c.866 1.5-.217 3.374-1.948 3.374H4.645c-1.73 0-2.813-1.874-1.948-3.374L10.052 3.38c.866-1.5 3.03-1.5 3.896 0l7.355 12.746ZM12 16.5h.008v.008H12V16.5Z" />
+                </svg>
+                <div>
+                    <strong>Chưa thể tiếp tục</strong>
+                    <p>{{ $errors->first() }}</p>
+                </div>
             </div>
         @endif
 
-        @if (count($cartItems) > 0)
-            <div id="cart-content">
-                <div class="space-y-4 mb-8">
-                @foreach ($cartItems as $index => $item)
-                    <div class="glass-card p-4 flex flex-col sm:flex-row sm:items-center gap-4 reveal" data-reveal-delay="{{ $index * 50 }}" id="cart-item-{{ $item['cart_key'] }}">
-                        {{-- Thumbnail --}}
-                        <div class="w-20 h-14 rounded-lg bg-gradient-to-br from-primary/20 to-accent/20 overflow-hidden flex-shrink-0">
-                            @if ($item['product']->thumbnail)
-                                <img src="{{$item['product']->thumbnail_url}}" alt="{{ $item['product']->title }}" class="w-full h-full object-cover">
-                            @endif
-                        </div>
-
-                        {{-- Info --}}
-                        <div class="flex-1 min-w-0">
-                            <a href="{{ route('products.show', $item['product']) }}" class="text-sm font-bold text-white hover:text-primary transition-colors line-clamp-1">
-                                {{ $item['product']->title }}
-                            </a>
-                            @if ($item['variant'])
-                                <div class="text-xs text-accent mt-0.5">Phiên bản: {{ $item['variant']->name }}</div>
-                            @endif
-                            <div class="flex items-center gap-2 mt-1">
-                                @if ($item['variant'])
-                                    @if ($item['variant']->isOnSale())
-                                        <span class="text-sm font-bold text-success">${{ $item['variant']->sale_price }}</span>
-                                        <span class="text-xs text-gray-500 line-through">${{ $item['variant']->price }}</span>
-                                    @else
-                                        <span class="text-sm font-bold text-success">${{ $item['variant']->price }}</span>
-                                    @endif
-                                @else
-                                    @if ($item['product']->isOnSale())
-                                        <span class="text-sm font-bold text-success">${{ $item['product']->sale_price }}</span>
-                                        <span class="text-xs text-gray-500 line-through">${{ $item['product']->price }}</span>
-                                    @else
-                                        <span class="text-sm font-bold text-success">${{ $item['product']->price }}</span>
-                                    @endif
-                                @endif
-                            </div>
-                        </div>
-
-                        {{-- Quantity --}}
-                        <form action="{{ route('cart.update', $item['product']) }}" method="POST" class="flex items-center gap-2">
-                            @csrf
-                            @method('PATCH')
-                            <input type="hidden" name="cart_key" value="{{ $item['cart_key'] }}">
-                            <label for="cart-quantity-{{ $loop->index }}" class="sr-only">Số lượng {{ $item['product']->title }}</label>
-                            <input id="cart-quantity-{{ $loop->index }}" type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="99" class="form-input w-16 text-center py-1.5 text-sm" onchange="this.form.submit()">
-                        </form>
-
-                        {{-- Subtotal --}}
-                        <div class="text-right">
-                            <span class="text-sm font-bold text-white">${{ number_format($item['subtotal'], 2) }}</span>
-                        </div>
-
-                        {{-- Remove --}}
-                        <form action="{{ route('cart.remove', $item['product']) }}" method="POST">
-                            @csrf
-                            @method('DELETE')
-                            <input type="hidden" name="cart_key" value="{{ $item['cart_key'] }}">
-                            <button type="submit" class="p-2 text-gray-500 hover:text-danger transition-colors" title="Xóa khỏi giỏ hàng" aria-label="Xóa {{ $item['product']->title }} khỏi giỏ hàng">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
-                            </button>
-                        </form>
-                    </div>
-                @endforeach
-            </div>
-
-            {{-- Total --}}
-            <div class="glass-card p-6 reveal">
-                <div class="flex items-center justify-between mb-6">
-                    <span class="text-lg font-semibold text-gray-300">Tổng cộng</span>
-                    <span class="text-3xl font-black text-success">${{ number_format($total, 2) }}</span>
+        @if (session('success'))
+            <div class="cart-notice cart-notice--success reveal" role="status">
+                <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" />
+                </svg>
+                <div>
+                    <strong>Giỏ hàng đã cập nhật</strong>
+                    <p>Thay đổi đã được lưu và tổng đơn hàng đã được tính lại.</p>
                 </div>
-                
-                <form action="{{ route('checkout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="w-full btn-primary text-lg justify-center py-4" id="checkout-btn">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 8.25h19.5M2.25 9h19.5m-16.5 5.25h6m-6 2.25h3m-3.75 3h15a2.25 2.25 0 0 0 2.25-2.25V6.75A2.25 2.25 0 0 0 19.5 4.5h-15a2.25 2.25 0 0 0-2.25 2.25v10.5A2.25 2.25 0 0 0 4.5 19.5Z" /></svg>
-                        Tiến hành Đặt hàng
-                    </button>
-                </form>
+            </div>
+        @endif
 
-                <a href="{{ route('products.index') }}" class="store-muted-link inline-flex w-full items-center justify-center gap-2 text-sm transition-colors mt-4">
-                    <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5 3 12m0 0 7.5-7.5M3 12h18" />
-                    </svg>
-                    Tiếp tục mua sắm
-                </a>
+        @if ($cartItemCount > 0)
+            <div class="cart-layout" id="cart-content">
+                <div class="cart-lines reveal">
+                    <div class="cart-lines__head">
+                        <div>
+                            <p class="cart-label">Danh sách sản phẩm</p>
+                            <h2>{{ $cartItemCount }} sản phẩm trong phiên này</h2>
+                        </div>
+                        <a href="{{ route('products.index') }}" class="cart-text-link">
+                            Thêm sản phẩm
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
+                            </svg>
+                        </a>
+                    </div>
+
+                    <div class="cart-line-list">
+                        @foreach ($cartItems as $index => $item)
+                            <article class="cart-line reveal" data-reveal-delay="{{ $index * 50 }}" id="cart-item-{{ $item['cart_key'] }}">
+                                <a href="{{ route('products.show', $item['product']) }}" class="cart-line__media" tabindex="-1" aria-hidden="true">
+                                    @if ($item['product']->thumbnail)
+                                        <img src="{{ $item['product']->thumbnail_url }}" alt="" loading="lazy">
+                                    @else
+                                        <svg viewBox="0 0 80 64" fill="none" aria-hidden="true">
+                                            <path d="M13 17.5h54M13 32h54M13 46.5h34" stroke="currentColor" stroke-width="1.5" />
+                                            <path d="M55 42.5h12v8H55z" stroke="currentColor" stroke-width="1.5" />
+                                        </svg>
+                                    @endif
+                                </a>
+
+                                <div class="cart-line__body">
+                                    <p class="cart-line__number">Line {{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</p>
+                                    <a href="{{ route('products.show', $item['product']) }}" class="cart-line__title">
+                                        {{ $item['product']->title }}
+                                    </a>
+                                    @if ($item['variant'])
+                                        <p class="cart-line__variant">Phiên bản / {{ $item['variant']->name }}</p>
+                                    @else
+                                        <p class="cart-line__variant">Bản tiêu chuẩn</p>
+                                    @endif
+                                </div>
+
+                                <div class="cart-line__quantity">
+                                    <span class="cart-label">Số lượng</span>
+                                    <form action="{{ route('cart.update', $item['product']) }}" method="POST" class="cart-quantity-form">
+                                        @csrf
+                                        @method('PATCH')
+                                        <input type="hidden" name="cart_key" value="{{ $item['cart_key'] }}">
+                                        <label for="cart-quantity-{{ $loop->index }}" class="sr-only">Số lượng {{ $item['product']->title }}</label>
+                                        <input id="cart-quantity-{{ $loop->index }}" type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="99" inputmode="numeric">
+                                        <button type="submit">Cập nhật</button>
+                                    </form>
+                                </div>
+
+                                <div class="cart-line__price">
+                                    <span class="cart-label">Tạm tính</span>
+                                    <strong>${{ number_format($item['subtotal'], 2) }}</strong>
+                                </div>
+
+                                <form action="{{ route('cart.remove', $item['product']) }}" method="POST" class="cart-line__remove">
+                                    @csrf
+                                    @method('DELETE')
+                                    <input type="hidden" name="cart_key" value="{{ $item['cart_key'] }}">
+                                    <button type="submit" title="Xóa khỏi giỏ hàng" aria-label="Xóa {{ $item['product']->title }} khỏi giỏ hàng">
+                                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                </form>
+                            </article>
+                        @endforeach
+                    </div>
+                </div>
+
+                <aside class="cart-summary reveal" aria-labelledby="cart-summary-title">
+                    <div class="cart-summary__status">
+                        <span class="cart-summary__status-dot" aria-hidden="true"></span>
+                        Sẵn sàng tạo đơn
+                    </div>
+
+                    <h2 id="cart-summary-title">Tóm tắt đơn hàng</h2>
+
+                    <dl class="cart-summary__ledger">
+                        <div>
+                            <dt>Sản phẩm</dt>
+                            <dd>{{ $cartItemCount }}</dd>
+                        </div>
+                        <div>
+                            <dt>Phí xử lý</dt>
+                            <dd>$0.00</dd>
+                        </div>
+                        <div class="cart-summary__total">
+                            <dt>Tổng cộng</dt>
+                            <dd>${{ number_format($total, 2) }}</dd>
+                        </div>
+                    </dl>
+
+                    <p class="cart-summary__note">
+                        Đơn hàng sẽ được ghi nhận trong tài khoản của bạn sau khi xác nhận.
+                    </p>
+
+                    <form action="{{ route('checkout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="cart-primary-action" id="checkout-btn">
+                            Tiến hành đặt hàng
+                            <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
+                            </svg>
+                        </button>
+                    </form>
+
+                    <a href="{{ route('products.index') }}" class="cart-secondary-action">
+                        Tiếp tục mua sắm
+                    </a>
+                </aside>
             </div>
         @else
-            <div class="glass-card p-16 text-center reveal">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-20 h-20 mx-auto text-gray-600 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" /></svg>
-                <h3 class="text-xl font-semibold text-white mb-2">Giỏ hàng của bạn đang trống</h3>
-                <p class="text-gray-500 mb-6">Hãy xem các sản phẩm của chúng tôi và thêm những gì bạn thích!</p>
-                <a href="{{ route('products.index') }}" class="btn-primary" id="browse-products-btn">Khám Phá Sản Phẩm</a>
+            <div class="cart-empty reveal">
+                <div class="cart-empty__copy">
+                    <p class="cart-label">Cart status / 00</p>
+                    <h2>Chưa có sản phẩm trong giỏ.</h2>
+                    <p>
+                        Chọn source code, theme hoặc module phù hợp. Sản phẩm bạn thêm sẽ xuất hiện ở đây để kiểm tra trước khi đặt hàng.
+                    </p>
+                    <a href="{{ route('products.index') }}" class="cart-primary-action" id="browse-products-btn">
+                        Khám phá sản phẩm
+                        <svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M5 12h14m-6-6 6 6-6 6" />
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="cart-empty__diagram" aria-hidden="true">
+                    <div class="cart-empty__signal">
+                        <span>00</span>
+                        <strong>EMPTY QUEUE</strong>
+                    </div>
+                    <svg class="cart-empty__icon" viewBox="0 0 160 160" fill="none">
+                        <path d="M34 38h11l9 55h65l13-41H49" stroke="currentColor" stroke-width="2" />
+                        <path d="M59 109h65" stroke="currentColor" stroke-width="2" />
+                        <circle cx="67" cy="126" r="6" stroke="currentColor" stroke-width="2" />
+                        <circle cx="116" cy="126" r="6" stroke="currentColor" stroke-width="2" />
+                        <path d="M80 66h30M95 51v30" stroke="currentColor" stroke-width="2" />
+                    </svg>
+                    <div class="cart-empty__route">
+                        <span class="is-active">Chọn sản phẩm</span>
+                        <span>Kiểm tra giỏ</span>
+                        <span>Tạo đơn hàng</span>
+                    </div>
+                </div>
             </div>
         @endif
     </div>

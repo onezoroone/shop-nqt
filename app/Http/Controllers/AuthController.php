@@ -12,6 +12,12 @@ class AuthController extends Controller
 {
     public function showLogin(): View
     {
+        $this->configureNoIndexSeo(
+            title: 'Đăng nhập tài khoản - NQT Dev',
+            description: 'Đăng nhập để quản lý đơn hàng và truy cập các sản phẩm số đã mua tại NQT Dev.',
+            canonicalUrl: route('login')
+        );
+
         return view('auth.login');
     }
 
@@ -35,6 +41,12 @@ class AuthController extends Controller
 
     public function showRegister(): View
     {
+        $this->configureNoIndexSeo(
+            title: 'Đăng ký tài khoản - NQT Dev',
+            description: 'Tạo tài khoản NQT Dev để đặt hàng và quản lý quyền truy cập sản phẩm số.',
+            canonicalUrl: route('register')
+        );
+
         return view('auth.register');
     }
 

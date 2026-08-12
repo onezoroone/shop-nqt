@@ -7,12 +7,12 @@
     <div class="max-w-md w-full px-4 sm:px-6 relative z-10">
         <div class="text-center mb-10 reveal">
             <span class="store-section-kicker">Create Account</span>
-            <h1 class="section-heading text-white">Đăng <span class="gradient-text">ký</span></h1>
+            <h1 class="section-heading text-white">Đăng <span class="store-title-mark">ký</span></h1>
             <p class="text-gray-400">Tạo tài khoản để mua source code và theo dõi đơn hàng.</p>
         </div>
 
         <div class="glass-card p-8 sm:p-10 reveal border border-white/10 shadow-2xl relative overflow-hidden" data-reveal-delay="100">
-            <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent to-primary"></div>
+            <div class="store-panel-rule absolute top-0 left-0 w-full h-1" aria-hidden="true"></div>
             <form action="{{ route('register.post') }}" method="POST">
                 @csrf
                 <div class="mb-6">

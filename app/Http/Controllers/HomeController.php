@@ -42,6 +42,22 @@ class HomeController extends Controller
                 ->get();
         });
 
+        $homeMetrics = Cache::remember('home_metrics', 300, function (): array {
+            $technologies = Product::published()
+                ->pluck('tech_stack')
+                ->merge(Project::published()->pluck('tech_stack'))
+                ->flatten()
+                ->filter(fn (mixed $technology): bool => is_string($technology) && filled(trim($technology)))
+                ->map(fn (string $technology): string => trim($technology))
+                ->unique(fn (string $technology): string => mb_strtolower($technology));
+
+            return [
+                'products' => Product::published()->count(),
+                'projects' => Project::published()->count(),
+                'technologies' => $technologies->count(),
+            ];
+        });
+
         $skills = Cache::remember('all_skills', 3600, function () {
             return Skill::ordered()->get()->groupBy('category');
         });
@@ -49,6 +65,7 @@ class HomeController extends Controller
         return view('home', [
             'featuredProjects' => $featuredProjects,
             'featuredProducts' => $featuredProducts,
+            'homeMetrics' => $homeMetrics,
             'skills' => $skills,
             'settings' => fn (string $key, mixed $default = null) => Setting::getValue($key, $default),
         ]);

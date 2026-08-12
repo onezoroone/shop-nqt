@@ -51,7 +51,7 @@
 
             {{-- Thumbnail --}}
             <div class="reveal glass-card overflow-hidden mb-10" data-reveal-delay="150">
-                <div class="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 relative">
+                <div class="store-card-media aspect-video relative">
                     @if ($project->thumbnail)
                         <img src="{{$project->thumbnail_url}}" alt="{{ $project->title }}" class="w-full h-full object-cover">
                     @else
@@ -87,10 +87,10 @@
                     <h3 class="text-xl font-bold text-white mb-6">Dự Án Liên Quan</h3>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         @foreach ($relatedProjects as $related)
-                            <a href="{{ route('projects.show', $related) }}" class="glass-card-hover group overflow-hidden" id="related-project-{{ $related->id }}">
-                                <div class="aspect-video bg-gradient-to-br from-primary/20 to-accent/20 relative overflow-hidden">
+                            <a href="{{ route('projects.show', $related) }}" class="store-index-card glass-card-hover group overflow-hidden" id="related-project-{{ $related->id }}">
+                                <div class="store-card-media aspect-video relative overflow-hidden">
                                     @if ($related->thumbnail)
-                                        <img src="{{$related->thumbnail_url}}" alt="{{ $related->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
+                                        <img src="{{$related->thumbnail_url}}" alt="{{ $related->title }}" class="w-full h-full object-cover" loading="lazy">
                                     @else
                                         <div class="absolute inset-0 flex items-center justify-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" /></svg>

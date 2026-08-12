@@ -7,7 +7,7 @@
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="mb-10 reveal">
             <span class="store-section-kicker">Customer Console</span>
-            <h1 class="section-heading text-white">Xin chào, <span class="gradient-text">{{ auth()->user()->name }}</span></h1>
+            <h1 class="section-heading text-white">Xin chào, <span class="store-title-mark">{{ auth()->user()->name }}</span></h1>
             <p class="text-gray-400">Quản lý tài khoản, đơn hàng và quyền truy cập sản phẩm số.</p>
         </div>
 

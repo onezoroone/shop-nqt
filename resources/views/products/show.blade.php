@@ -95,7 +95,7 @@
 
             {{-- Right: Info --}}
             <div class="lg:col-span-2 reveal" data-reveal-delay="150">
-                <div class="glass-card p-6 sticky top-24">
+                <div class="product-buy-panel glass-card p-6 sticky top-24">
                     <div class="flex flex-wrap gap-2 mb-3">
                         @foreach ($product->categories as $cat)
                             <span class="tech-tag">{{ $cat->name }}</span>
@@ -123,7 +123,7 @@
                                             data-name="{{ $variant->name }}"
                                             data-demo-url="{{ $variant->demo_url ?? '' }}"
                                             {{ $variant->is_default ? 'checked' : '' }}>
-                                        <div class="flex items-center justify-between p-3 rounded-xl border-2 transition-all duration-200
+                                        <div class="variant-option__surface flex items-center justify-between p-3 border-2
                                             {{ $variant->is_default ? 'border-primary bg-primary/10' : 'border-white/10 hover:border-white/30 bg-white/5' }}">
                                             <div class="flex items-center gap-3">
                                                 <div class="w-5 h-5 rounded-full border-2 flex items-center justify-center transition-colors
@@ -206,7 +206,7 @@
                         @if ($product->hasVariants())
                             <input type="hidden" name="variant_id" id="selected-variant-id" value="{{ $product->getDefaultVariant()?->id }}">
                         @endif
-                        <button type="submit" class="w-full btn-primary text-lg justify-center py-4 animate-pulse-glow" id="add-to-cart-btn">
+                        <button type="submit" class="w-full btn-primary text-lg justify-center py-4" id="add-to-cart-btn">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 0 0-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 0 0-16.536-1.84M7.5 14.25 5.106 5.272M6 20.25a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Zm12.75 0a.75.75 0 1 1-1.5 0 .75.75 0 0 1 1.5 0Z" /></svg>
                             Thêm vào Giỏ hàng
                         </button>

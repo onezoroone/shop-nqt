@@ -13,6 +13,13 @@ class CartController extends Controller
 {
     public function index(): View
     {
+        $this->configureNoIndexSeo(
+            title: 'Giỏ hàng - NQT Dev',
+            description: 'Kiểm tra sản phẩm số, phiên bản, số lượng và tổng giá trị trước khi tạo đơn hàng tại NQT Dev.',
+            canonicalUrl: route('cart.index'),
+            followLinks: true
+        );
+
         $cart = session()->get('cart', []);
 
         // Collect all product IDs (cart keys are "product_id" or "product_id-variant_id")
