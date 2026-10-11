@@ -33,7 +33,6 @@
                         class="home-production-row reveal"
                         data-reveal-delay="{{ min($index, 3) * 50 }}"
                         id="featured-project-{{ $project->id }}"
-                        aria-label="Xem dự án {{ $project->title }}"
                     >
                         <span class="home-production-row__index">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
 

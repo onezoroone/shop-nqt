@@ -1,13 +1,15 @@
 @props([
     'product',
     'index' => 0,
+    'headingLevel' => 3,
+    'priority' => false,
 ])
 
 <div class="store-index-card glass-card-hover group overflow-hidden reveal" data-reveal-delay="{{ ($index % 8) * 50 }}" id="product-card-{{ $product->id }}">
-    <a href="{{ route('products.show', $product) }}">
+    <a href="{{ route('products.show', $product) }}" aria-label="{{ $product->title }}">
         <div class="store-card-media aspect-[4/3] relative overflow-hidden">
             @if ($product->thumbnail)
-                <img src="{{ $product->thumbnail_url }}" alt="{{ $product->title }}" class="w-full h-full object-cover" loading="lazy">
+                <x-responsive-image :src="$product->thumbnail_url" :alt="$product->title" class="w-full h-full object-cover" :loading="$priority ? 'eager' : 'lazy'" :fetchpriority="$priority ? 'high' : 'auto'" sizes="(min-width: 1024px) 30vw, (min-width: 640px) 50vw, 100vw" />
             @else
                 <div class="absolute inset-0 flex items-center justify-center">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-12 h-12 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="m21 7.5-9-5.25L3 7.5m18 0-9 5.25m9-5.25v9l-9 5.25M3 7.5l9 5.25M3 7.5v9l9 5.25m0-9v9" /></svg>
@@ -36,8 +38,8 @@
             <span class="text-xs text-accent font-medium">{{ $product->categories->pluck('name')->join(', ') }}</span>
             <span class="text-xs text-gray-500">{{ $product->download_count }} lượt bán</span>
         </div>
-        <a href="{{ route('products.show', $product) }}">
-            <h3 class="text-sm font-bold text-white group-hover:text-primary transition-colors mb-2 line-clamp-2">{{ $product->title }}</h3>
+        <a href="{{ route('products.show', $product) }}" aria-label="{{ $product->title }}">
+            <h{{ $headingLevel }} class="text-sm font-bold text-white group-hover:text-primary transition-colors mb-2 line-clamp-2">{{ $product->title }}</h{{ $headingLevel }}>
         </a>
         <p class="text-xs text-gray-400 line-clamp-2 mb-3">{{ $product->excerpt }}</p>
         <div class="store-product-card-footer flex items-center justify-between">

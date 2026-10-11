@@ -24,7 +24,7 @@ class Setting extends Model
      */
     public static function getValue(string $key, mixed $default = null): mixed
     {
-        $settings = Cache::remember('site_settings', 3600, function () {
+        $settings = Cache::memo()->remember('site_settings', 3600, function () {
             return static::pluck('value', 'key')->toArray();
         });
 
@@ -37,13 +37,16 @@ class Setting extends Model
     public static function setValue(string $key, ?string $value): void
     {
         static::updateOrCreate(['key' => $key], ['value' => $value]);
-        Cache::forget('site_settings');
     }
 
     protected static function booted(): void
     {
         static::saved(function () {
-            Cache::forget('site_settings');
+            Cache::memo()->forget('site_settings');
+        });
+
+        static::deleted(function () {
+            Cache::memo()->forget('site_settings');
         });
     }
 }

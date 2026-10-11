@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page_styles', 'resources/css/shop.css')
+
 @section('title', 'Cửa hàng')
 @section('meta_description', 'Khám phá các sản phẩm số cao cấp — Gói Laravel, giao diện WordPress và hơn thế nữa.')
 
@@ -119,7 +121,7 @@
                 @if ($products->count())
                     <div class="shop-catalog__products store-catalog-grid">
                         @foreach ($products as $i => $product)
-                            <x-product.card :product="$product" :index="$i" />
+                            <x-product.card :product="$product" :index="$i" :heading-level="2" :priority="$loop->first" />
                         @endforeach
                     </div>
 

@@ -29,13 +29,14 @@ class ProductController extends Controller
 
         $categories = Cache::remember('product_categories', 600, function () {
             return Category::ofType('product')
+                ->addSelect([
+                    'products_count' => Product::published()
+                        ->selectRaw('count(*)')
+                        ->join('category_product', 'products.id', '=', 'category_product.product_id')
+                        ->whereColumn('category_product.category_id', 'categories.id'),
+                ])
                 ->ordered()
-                ->get()
-                ->each(function ($category) {
-                    $category->products_count = Product::published()
-                        ->whereHas('categories', fn ($q) => $q->where('categories.id', $category->id))
-                        ->count();
-                });
+                ->get();
         });
 
         $products = Product::select('id', 'category_id', 'title', 'slug', 'excerpt', 'thumbnail', 'price', 'sale_price', 'tech_stack', 'download_count', 'published_at')

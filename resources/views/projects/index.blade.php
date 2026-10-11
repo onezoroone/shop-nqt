@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page_styles', 'resources/css/projects.css')
+
 @section('title', 'Dự án')
 @section('meta_description', 'Khám phá hồ sơ năng lực về ứng dụng web, công cụ và dự án mã nguồn mở của tôi.')
 
@@ -73,7 +75,7 @@
 
                         <div class="project-file__media">
                             @if ($project->thumbnail)
-                                <img src="{{ $project->thumbnail_url }}" alt="{{ $project->title }}" loading="lazy">
+                                <x-responsive-image :src="$project->thumbnail_url" :alt="$project->title" :loading="$loop->first ? 'eager' : 'lazy'" :fetchpriority="$loop->first ? 'high' : 'auto'" sizes="(min-width: 1024px) 50vw, 100vw" />
                             @else
                                 <div class="project-file__placeholder" aria-hidden="true">
                                     <span>Case {{ str_pad((string) ($projects->firstItem() + $index), 2, '0', STR_PAD_LEFT) }}</span>

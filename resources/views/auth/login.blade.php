@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page_styles', 'resources/css/login.css')
+
 @section('title', 'Đăng nhập')
 
 @section('content')

@@ -38,7 +38,7 @@
                     >
                         <a href="{{ route('products.show', $product) }}" class="home-release-product__media" aria-label="Xem sản phẩm {{ $product->title }}">
                             @if ($product->thumbnail)
-                                <img src="{{ $product->thumbnail_url }}" alt="{{ $product->title }}" loading="lazy" class="home-image-reveal">
+                                <x-responsive-image :src="$product->thumbnail_url" :alt="$product->title" loading="lazy" class="home-image-reveal" sizes="(min-width: 1024px) 50vw, 100vw" />
                             @else
                                 <div class="home-release-product__placeholder" aria-hidden="true">
                                     <span>Module {{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
@@ -49,10 +49,10 @@
                                 </div>
                             @endif
 
-                            <span class="home-release-product__number">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
+                            <span class="home-release-product__number" aria-hidden="true">{{ str_pad((string) ($index + 1), 2, '0', STR_PAD_LEFT) }}</span>
 
                             @if ($maxDiscount > 0)
-                                <span class="home-release-product__sale">-{{ $maxDiscount }}%</span>
+                                <span class="home-release-product__sale" aria-hidden="true">-{{ $maxDiscount }}%</span>
                             @endif
                         </a>
 

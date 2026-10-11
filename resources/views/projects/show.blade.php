@@ -53,7 +53,7 @@
             <div class="reveal glass-card overflow-hidden mb-10" data-reveal-delay="150">
                 <div class="store-card-media aspect-video relative">
                     @if ($project->thumbnail)
-                        <img src="{{$project->thumbnail_url}}" alt="{{ $project->title }}" class="w-full h-full object-cover">
+                        <x-responsive-image :src="$project->thumbnail_url" :alt="$project->title" class="w-full h-full object-cover" fetchpriority="high" sizes="(min-width: 1024px) 960px, 100vw" />
                     @else
                         <div class="absolute inset-0 flex items-center justify-center">
                             <svg xmlns="http://www.w3.org/2000/svg" class="w-24 h-24 text-white/5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" /></svg>
@@ -65,7 +65,7 @@
             {{-- Tech Stack --}}
             @if ($project->tech_stack)
                 <div class="reveal mb-10" data-reveal-delay="200">
-                    <h3 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Công Nghệ</h3>
+                    <h2 class="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-3">Công Nghệ</h2>
                     <div class="flex flex-wrap gap-2">
                         @foreach ($project->tech_stack as $tech)
                             <span class="tech-tag">{{ $tech }}</span>
@@ -84,13 +84,13 @@
             {{-- Related Projects --}}
             @if ($relatedProjects->count())
                 <div class="reveal" data-reveal-delay="300">
-                    <h3 class="text-xl font-bold text-white mb-6">Dự Án Liên Quan</h3>
+                    <h2 class="text-xl font-bold text-white mb-6">Dự Án Liên Quan</h2>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                         @foreach ($relatedProjects as $related)
                             <a href="{{ route('projects.show', $related) }}" class="store-index-card glass-card-hover group overflow-hidden" id="related-project-{{ $related->id }}">
                                 <div class="store-card-media aspect-video relative overflow-hidden">
                                     @if ($related->thumbnail)
-                                        <img src="{{$related->thumbnail_url}}" alt="{{ $related->title }}" class="w-full h-full object-cover" loading="lazy">
+                                        <x-responsive-image :src="$related->thumbnail_url" :alt="$related->title" class="w-full h-full object-cover" loading="lazy" sizes="(min-width: 768px) 320px, 100vw" />
                                     @else
                                         <div class="absolute inset-0 flex items-center justify-center">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white/10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="0.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" /></svg>
@@ -98,7 +98,7 @@
                                     @endif
                                 </div>
                                 <div class="p-4">
-                                    <h4 class="text-sm font-bold text-white group-hover:text-primary transition-colors">{{ $related->title }}</h4>
+                                    <h3 class="text-sm font-bold text-white group-hover:text-primary transition-colors">{{ $related->title }}</h3>
                                     <p class="text-xs text-gray-500 mt-1 line-clamp-1">{{ $related->excerpt }}</p>
                                 </div>
                             </a>

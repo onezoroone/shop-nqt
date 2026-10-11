@@ -10,6 +10,14 @@ class SitemapTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_robots_has_an_absolute_sitemap_url(): void
+    {
+        $this->get(route('robots'))
+            ->assertOk()
+            ->assertHeader('Content-Type', 'text/plain; charset=UTF-8')
+            ->assertSee('Sitemap: '.route('sitemap'), false);
+    }
+
     public function test_sitemap_returns_xml_with_published_products(): void
     {
         $published = Product::factory()->create(['slug' => 'published-product']);

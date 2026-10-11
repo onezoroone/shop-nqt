@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page_styles', 'resources/css/home.css')
+
 @section('title', 'NQT Dev')
 @section('meta_description', 'Portfolio and digital product shop by NQT Dev — Full-Stack Developer specializing in Laravel, WordPress, and modern web technologies.')
 

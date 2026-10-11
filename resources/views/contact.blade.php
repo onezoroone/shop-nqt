@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page_styles', 'resources/css/contact.css')
+
 @section('title', 'Liên hệ')
 @section('meta_description', 'Liên hệ — gửi tin nhắn cho tôi về dự án, hợp tác hoặc các câu hỏi.')
 

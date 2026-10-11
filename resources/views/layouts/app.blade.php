@@ -6,16 +6,32 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     {!! SEO::generate() !!}
 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+    @php
+        $homeCriticalCss = null;
+        $homeFontUrls = [];
 
-    <script>
-        if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.documentElement.classList.add('motion-enabled');
+        if (request()->routeIs('home') && ! Vite::isRunningHot()) {
+            try {
+                foreach (['space-grotesk-latin-vietnamese', 'ibm-plex-sans-latin-vietnamese', 'jetbrains-mono-latin-vietnamese'] as $font) {
+                    $homeFontUrls[] = Vite::asset('resources/fonts/'.$font.'.woff2');
+                }
+
+                $homeCriticalCss = Vite::content('resources/css/home-critical.css');
+            } catch (\Illuminate\Foundation\ViteException $exception) {
+                $homeCriticalCss = null;
+            }
         }
-    </script>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @endphp
+
+    @if ($homeCriticalCss !== null)
+        @foreach ($homeFontUrls as $fontUrl)
+            <link rel="preload" href="{{ $fontUrl }}" as="font" type="font/woff2" crossorigin @if ($loop->first) fetchpriority="high" @endif>
+        @endforeach
+        <style>{!! $homeCriticalCss !!}</style>
+        @vite('resources/js/app.js')
+    @else
+        @vite(array_filter(['resources/css/app.css', trim($__env->yieldContent('page_styles')), 'resources/js/app.js']))
+    @endif
 </head>
 <body class="site-body min-h-screen flex flex-col">
     {{-- Navigation --}}
@@ -23,8 +39,8 @@
         <div class="site-shell max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="site-nav__bar flex items-center justify-between gap-4 h-16 md:h-20">
                 {{-- Logo --}}
-                <a href="{{ route('home') }}" class="site-brand flex items-center gap-2 logo-container" id="site-logo" aria-label="NQT Dev">
-                    <div class="site-brand-mark w-10 h-10 flex items-center justify-center logo-icon">
+                <a href="{{ route('home') }}" class="site-brand flex items-center gap-2 logo-container" id="site-logo">
+                    <div class="site-brand-mark w-10 h-10 flex items-center justify-center logo-icon" aria-hidden="true">
                         <span class="site-brand-letter text-white font-black text-lg logo-letter">N</span>
                     </div>
                     <span class="site-brand-text text-xl font-bold text-white logo-text">NQT<span class="text-primary">Dev</span></span>
@@ -129,8 +145,8 @@
             <p class="site-footer-statement">Code đẹp chỉ có giá trị khi bán được, tải nhanh và vận hành gọn.</p>
 
             <div class="site-footer__meta">
-                <a href="{{ route('home') }}" class="site-brand flex items-center gap-2 logo-container" aria-label="NQT Dev">
-                    <div class="site-brand-mark w-10 h-10 flex items-center justify-center logo-icon">
+                <a href="{{ route('home') }}" class="site-brand flex items-center gap-2 logo-container">
+                    <div class="site-brand-mark w-10 h-10 flex items-center justify-center logo-icon" aria-hidden="true">
                         <span class="site-brand-letter text-white font-black text-lg logo-letter">N</span>
                     </div>
                     <span class="site-brand-text text-lg font-bold text-white logo-text">NQT<span class="text-primary">Dev</span></span>

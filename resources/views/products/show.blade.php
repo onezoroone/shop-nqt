@@ -4,6 +4,7 @@
 @section('meta_description', $product->excerpt)
 
 @section('content')
+@inject('responsiveImages', 'App\ResponsiveImages')
 <section class="py-12 store-view store-product-detail-view">
     <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <nav class="flex items-center gap-2 text-sm text-gray-500 mb-8 reveal">
@@ -35,7 +36,7 @@
                     $totalSlides = count($lightboxImages);
                 @endphp
                 <div class="product-detail-gallery glass-card" data-product-gallery>
-                    <script type="application/json" data-product-gallery-images>@json($lightboxImages)</script>
+                    <script type="application/json" data-product-gallery-images>@json(array_map(fn ($image) => array_merge($image, $responsiveImages->attributes($image['url'])), $lightboxImages))</script>
 
                     <div class="product-gallery-main product-gallery-swiper">
                         <div class="product-gallery-meta">
@@ -49,7 +50,7 @@
 
                         @if ($activeGalleryImage)
                             <button type="button" class="product-gallery-stage gallery-lightbox-trigger swiper-slide" data-gallery-open data-lightbox-index="0" aria-label="Xem {{ $product->title }} toàn màn hình">
-                                <img src="{{ $activeGalleryImage['url'] }}" alt="{{ $activeGalleryImage['alt'] }}" class="product-gallery-image" data-gallery-image fetchpriority="high">
+                                <x-responsive-image :src="$activeGalleryImage['url']" :alt="$activeGalleryImage['alt']" class="product-gallery-image" data-gallery-image fetchpriority="high" sizes="(min-width: 1024px) 640px, 100vw" />
                                 <span class="product-gallery-zoom">
                                     <svg aria-hidden="true" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
                                         <path stroke-linecap="round" stroke-linejoin="round" d="m21 21-4.35-4.35m0 0A8.25 8.25 0 1 0 5.025 5.025 8.25 8.25 0 0 0 16.65 16.65ZM10.5 7.5v6m3-3h-6" />
@@ -84,7 +85,7 @@
                         <div class="product-gallery-thumbs product-thumbs-swiper" role="listbox" aria-label="Chọn ảnh xem trước">
                             @foreach ($lightboxImages as $image)
                                 <button type="button" class="product-gallery-thumb swiper-slide {{ $loop->first ? 'is-active swiper-slide-thumb-active' : '' }}" data-gallery-thumb data-gallery-index="{{ $loop->index }}" role="option" aria-selected="{{ $loop->first ? 'true' : 'false' }}" aria-label="Xem ảnh {{ $loop->iteration }} của {{ $product->title }}">
-                                    <img src="{{ $image['url'] }}" alt="{{ $image['alt'] }}" loading="{{ $loop->first ? 'eager' : 'lazy' }}">
+                                    <x-responsive-image :src="$image['url']" :alt="$image['alt']" loading="lazy" sizes="80px" />
                                 </button>
                             @endforeach
                         </div>
@@ -107,7 +108,7 @@
                     @if ($product->hasVariants())
                         {{-- ===== VARIANT SELECTOR ===== --}}
                         <div id="variant-selector" class="mb-6">
-                            <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Chọn phiên bản</h4>
+                            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Chọn phiên bản</h2>
                             <div class="space-y-2">
                                 @foreach ($product->variants as $variant)
                                     @php
@@ -232,7 +233,7 @@
                     {{-- Tech Stack --}}
                     @if ($product->tech_stack)
                         <div class="mt-6 pt-6 border-t border-white/5">
-                            <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Được xây dựng bằng</h4>
+                            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Được xây dựng bằng</h2>
                             <div class="flex flex-wrap gap-1.5">
                                 @foreach ($product->tech_stack as $tech)
                                     <a href="{{ route('products.index', ['tech' => $tech]) }}" class="tech-tag text-[10px] hover:bg-primary/30 hover:border-primary/50 transition-colors" title="Xem tất cả sản phẩm dùng {{ $tech }}">{{ $tech }}</a>
@@ -244,7 +245,7 @@
                     {{-- Features --}}
                     @if ($product->features)
                         <div class="mt-6 pt-6 border-t border-white/5">
-                            <h4 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Tính Năng</h4>
+                            <h2 class="text-xs font-semibold text-gray-400 uppercase tracking-wider mb-3">Tính Năng</h2>
                             <div class="space-y-2">
                                 @foreach ($product->features as $feature)
                                     <div class="flex items-center gap-2 text-sm text-gray-300">
@@ -315,7 +316,7 @@
         {{-- Related Products --}}
         @if ($relatedProducts->count())
             <div class="mt-14 reveal">
-                <h3 class="text-xl font-bold text-white mb-6">Sản Phẩm Liên Quan</h3>
+                <h2 class="text-xl font-bold text-white mb-6">Sản Phẩm Liên Quan</h2>
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     @foreach ($relatedProducts as $i => $related)
                         <x-product.card :product="$related" :index="$i" />

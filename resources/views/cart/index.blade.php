@@ -1,5 +1,7 @@
 @extends('layouts.app')
 
+@section('page_styles', 'resources/css/cart.css')
+
 @section('title', 'Giỏ hàng')
 
 @section('content')
@@ -79,7 +81,7 @@
                             <article class="cart-line reveal" data-reveal-delay="{{ $index * 50 }}" id="cart-item-{{ $item['cart_key'] }}">
                                 <a href="{{ route('products.show', $item['product']) }}" class="cart-line__media" tabindex="-1" aria-hidden="true">
                                     @if ($item['product']->thumbnail)
-                                        <img src="{{ $item['product']->thumbnail_url }}" alt="" loading="lazy">
+                                        <x-responsive-image :src="$item['product']->thumbnail_url" alt="" loading="lazy" sizes="96px" />
                                     @else
                                         <svg viewBox="0 0 80 64" fill="none" aria-hidden="true">
                                             <path d="M13 17.5h54M13 32h54M13 46.5h34" stroke="currentColor" stroke-width="1.5" />

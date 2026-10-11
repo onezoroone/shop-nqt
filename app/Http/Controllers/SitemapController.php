@@ -9,6 +9,12 @@ use Illuminate\Support\Collection;
 
 class SitemapController extends Controller
 {
+    public function robots(): Response
+    {
+        return response("User-agent: *\nDisallow:\n\nSitemap: ".route('sitemap')."\n")
+            ->header('Content-Type', 'text/plain; charset=UTF-8');
+    }
+
     public function __invoke(): Response
     {
         $products = Product::query()
